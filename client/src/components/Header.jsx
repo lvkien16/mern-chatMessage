@@ -1,6 +1,5 @@
 import { Button, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
-import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
 
 export default function Header() {
@@ -11,10 +10,13 @@ export default function Header() {
         to="/"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
       >
-        <span>Kien</span>
+        <span>Zekenes</span>
       </Link>
 
       <div className="flex gap-2 md:order-2">
+        <Button className="w-12 h-10 hidden sm:inline" color={"gray"} pill>
+          <FaMoon />
+        </Button>
         <Link to="sign-in">
           <Button className="bg-emerald-700">Sign In</Button>
         </Link>
@@ -22,7 +24,7 @@ export default function Header() {
       </div>
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>
-          <Link to="/">Home</Link>
+          <Link to="/"> Home</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/messages"} as={"div"}>
           <Link to="/messages">Messages</Link>
