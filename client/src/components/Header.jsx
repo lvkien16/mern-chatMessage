@@ -10,7 +10,7 @@ export default function Header() {
         to="/"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
       >
-        <span>Zekenes</span>
+        <span>Zene</span>
       </Link>
 
       <div className="flex gap-2 md:order-2">
