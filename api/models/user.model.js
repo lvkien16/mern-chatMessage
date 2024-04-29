@@ -23,11 +23,11 @@ const userSchema = new mongoose.Schema(
     },
     address: {
       type: String,
-      required: true,
+      required: false,
     },
     birthday: {
       type: Date,
-      required: true,
+      required: false,
     },
   },
   { timestamps: true }

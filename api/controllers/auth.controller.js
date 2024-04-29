@@ -3,8 +3,8 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 
 export const signup = async (req, res, next) => {
-  const { name, email, password, address, birthday } = req.body;
-  if (!name || !email || !password || !address || !birthday) {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
     return next(errorHandler(400, "All fields are required"));
   }
 
@@ -13,8 +13,6 @@ export const signup = async (req, res, next) => {
     name,
     email,
     password: hashPassword,
-    address,
-    birthday,
   });
   try {
     await newUser.save();
