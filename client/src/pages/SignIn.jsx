@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { FaRegUser } from "react-icons/fa6";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { TbLock } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { Alert, Spinner } from "flowbite-react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [errorMessge, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error: errorMessge } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
@@ -17,8 +22,7 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/sign-in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -26,16 +30,15 @@ export default function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        setErrorMessage(data.message);
+        dispatch(signInFailure(data.message));
       }
 
-      setLoading(false);
       if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate("/home");
       }
     } catch (error) {
-      setErrorMessage("An error occurred");
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
   return (
