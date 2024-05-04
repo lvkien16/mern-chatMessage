@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <Navbar className="border-b-2">
       <Link
-        to="/"
+        to="/home"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
       >
         <span>Zene</span>
@@ -17,14 +17,14 @@ export default function Header() {
         <Button className="w-12 h-10 hidden sm:inline" color={"gray"} pill>
           <FaMoon />
         </Button>
-        <Link to="sign-in">
-          <Button className="bg-emerald-700">Sign In</Button>
+        <Link to="/sign-in">
+          <Button className="bg-emerald-700">Sign in</Button>
         </Link>
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link active={path === "/"} as={"div"}>
-          <Link to="/"> Home</Link>
+        <Navbar.Link active={path === "/home"} as={"div"}>
+          <Link to="/home"> Home</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/messages"} as={"div"}>
           <Link to="/messages">Messages</Link>

@@ -9,16 +9,18 @@ import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 
 export default function App() {
+  const path = window.location.pathname;
   return (
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<SignIn />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/notifications" element={<Notifications />} />
-        <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
