@@ -43,7 +43,7 @@ export default function OAuth() {
       type="button"
       className="flex items-center justify-center rounded w-full border-2 mt-3 py-2 bg-emerald-700 text-white hover:bg-transparent hover:text-emerald-700 hover:border-emerald-700"
     >
-      <AiFillGoogleCircle className="text-3xl" />
+      <AiFillGoogleCircle className="text-2xl" />
       <span className="pl-3">Continue with Google</span>
     </button>
   );
