@@ -5,6 +5,7 @@ import { TbLock } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { Alert, Spinner } from "flowbite-react";
+import OAuth from "../components/OAuth";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -144,6 +145,7 @@ export default function SignUp() {
                   "Sign Up"
                 )}
               </button>
+              <OAuth />
             </div>
             <div className="w-full px-3">
               {/* <button className="flex items-center justify-center border-2 py-2 w-full mt-3 bg-emerald-700 text-white hover:bg-transparent hover:text-emerald-700 hover:border-emerald-700 rounded">

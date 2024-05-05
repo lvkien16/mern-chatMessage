@@ -17,8 +17,10 @@ export default function Header() {
         <Button className="w-12 h-10 hidden sm:inline" color={"gray"} pill>
           <FaMoon />
         </Button>
-        <Link to="/sign-in">
-          <Button className="bg-emerald-700">Sign in</Button>
+        <Link to="/sign-in" className="flex items-center">
+          <button className="border hover:border-emerald-700 text-white bg-emerald-700 hover:bg-transparent hover:text-emerald-700 p-2 rounded">
+            Sign in
+          </button>
         </Link>
         <Navbar.Toggle />
       </div>
