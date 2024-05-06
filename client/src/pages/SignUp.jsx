@@ -52,7 +52,8 @@ export default function SignUp() {
       </h2>
       <div className="mt-5 flex justify-between w-full container mx-auto">
         <div className="hidden md:flex mx-auto items-center font-bold text-emerald-700">
-          WELCOME TO ZENE!!!
+          WELCOME TO ZENE!!! <br />
+          You must sign in to see other features
         </div>
         <div className="w-full md:w-2/4 text-center">
           <form onSubmit={handleSubmit}>
@@ -65,7 +66,7 @@ export default function SignUp() {
                 <div className="w-full">
                   <span></span>
                   <input
-                    className="border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none w-full"
+                    className="border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none w-full dark:bg-gray-800 dark:text-white"
                     type="text"
                     placeholder="Name"
                     name="name"
@@ -83,7 +84,7 @@ export default function SignUp() {
                 </div>
                 <div className="w-full">
                   <input
-                    className="w-full border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none"
+                    className="w-full border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none dark:bg-gray-800 dark:text-white"
                     type="email"
                     placeholder="Email"
                     name="email"
@@ -103,7 +104,7 @@ export default function SignUp() {
                 </div>
                 <div className="w-full">
                   <input
-                    className="w-full border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none"
+                    className="w-full border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none dark:bg-gray-800 dark:text-white"
                     type="password"
                     placeholder="Password"
                     name="password"
@@ -121,7 +122,7 @@ export default function SignUp() {
                 </div>
                 <div className="w-full">
                   <input
-                    className="w-full border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none"
+                    className="w-full border-emerald-700 border-2 focus:border-none text-emerald-700 rounded rounded-l-none dark:bg-gray-800 dark:text-white"
                     type="password"
                     placeholder="Confirm password"
                     name="confirmPassword"
