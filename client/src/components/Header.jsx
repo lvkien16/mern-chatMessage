@@ -43,7 +43,7 @@ export default function Header() {
                 />
                 <span>{currentUser.name}</span>
               </div>
-              <Link to="/profile">
+              <Link to={`/profile?user=${currentUser._id}`}>
                 <Dropdown.Item>Profile</Dropdown.Item>
               </Link>
               <Dropdown.Item>Sign out</Dropdown.Item>
