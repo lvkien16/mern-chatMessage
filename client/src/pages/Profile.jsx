@@ -1,15 +1,20 @@
 import { useSelector } from "react-redux";
-import { Modal } from "flowbite-react";
+import { Dropdown, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { FaComment } from "react-icons/fa";
 import { FaShareAlt } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
+import OtherProfile from "./OtherProfile";
+import { FaCaretRight } from "react-icons/fa";
+// import { avatar } from "../../public/images/avatar.png";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 export default function Profile() {
   const location = useLocation();
   const [user, setUser] = useState("");
   const [showAvatar, setShowAvatar] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
@@ -21,7 +26,6 @@ export default function Profile() {
       const fetchPost = async () => {
         const res = await fetch(`/api/user/getuser/${user}`);
         const data = await res.json();
-        console.log(data);
         if (!res.ok) {
           return;
         } else {
@@ -38,74 +42,105 @@ export default function Profile() {
   const handleShowAvatar = async () => {
     setShowAvatar(true);
   };
+  const handleShowEditProfile = async () => {
+    setShowEditProfile(true);
+  };
   return (
-    // tao ra trang moi neu nhu user khac voi currentUser
     <>
       {currentUser._id === user && !otherUser && (
-        <div className="container mx-auto py-5 px-4">
-          <div className="flex gap-5 items-center">
-            <div className="">
-              <img
-                onClick={handleShowAvatar}
-                src={currentUser.avatar}
-                alt="Avatar"
-                className="rounded-full hover:cursor-pointer w-16 h-16 border-2"
-              />
+        <div className="container mx-auto px-4">
+          <div className="md:flex justify-between">
+            <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen">
+              <div className="flex gap-3 items-center justify-center">
+                <img
+                  src={currentUser.avatar}
+                  onClick={handleShowAvatar}
+                  className="rounded-full h-14 w-14 bg-gray-200 hover:cursor-pointer"
+                  alt=""
+                />
+                <h2 className="text-2xl mt-2 font-bold">{currentUser.name}</h2>
+              </div>
+              <div className="other information my-3 flex justify-center">
+                <div className="my-5 text-center w-2/3">
+                  <p>From Dien Bien city</p>
+                  <p>Birthday 16/05/2004</p>
+                </div>
+              </div>
+              <div className="flex justify-center mb-5">
+                <button className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700">
+                  Edit your profile
+                </button>
+              </div>
+              <hr className="hidden md:block border-emerald-700" />
             </div>
-            <div className="">{currentUser.name}</div>
-            <div>
-              <button className="bg-emerald-700 text-white hover:bg-transparent hover:text-emerald-700 px-5 py-2 rounded border-2 border-emerald-700">
-                Edit
-              </button>
-            </div>
-          </div>
-          <hr className="mt-5" />
-          <div className="mt-5">
-            <div className="">
-              <div className="mt-3">
-                <div className="md:w-2/3 lg:w-1/2 mx-auto flex items-center gap-2 mb-3">
-                  <img
-                    src={currentUser.avatar}
-                    className="w-7 h7 rounded-full"
-                    alt=""
-                  />
-                  <span>{currentUser.name}</span>
+            <div className="md:border-x-2 md:w-2/3 px-2 pt-5">
+              <div className="">
+                <div className="flex justify-between items-center">
+                  <div className="user flex items-center">
+                    <img
+                      src={currentUser.avatar}
+                      className="w-6 h-6 rounded-full bg-gray-300"
+                      alt=""
+                    />
+                    <span>
+                      <FaCaretRight />
+                    </span>
+                    <p className="font-bold"> {currentUser.name} </p>
+                  </div>
+                  <div className="about post">
+                    <Dropdown
+                      arrowIcon={false}
+                      inline
+                      label={<BsThreeDotsVertical />}
+                    >
+                      <Dropdown.Item>
+                        <button>Edit</button>
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <button>Delete</button>
+                      </Dropdown.Item>
+                    </Dropdown>
+                  </div>
                 </div>
-                <div className="lg:w-1/2 md:w-2/3 mx-auto mb-3">
-                  <p>post title</p>
-                </div>
-                <div className="flex justify-center">
-                  <img
-                    className="w-full h-auto rounded-lg lg:w-1/2 md:w-2/3"
-                    src="https://www.picserver.org/highway-signs2/images/status.jpg"
-                    alt=""
-                  />
-                </div>
-                <div className="mx-auto lg:w-1/2 md:w-2/3">
-                  <div className="mt-3 flex justify-between">
-                    <div className="w-1/2 flex justify-center">
-                      <button className="rounded hover:bg-gray-300 dark:hover:bg-gray-800 w-full flex justify-center items-center py-3 gap-2">
-                        <FaHeart className="text-gray-700 dark:text-white" />
-                        <p>999</p>
-                      </button>
+                <div className="posts">
+                  <div className="post title py-3">
+                    <p>This is a new post</p>
+                  </div>
+                  <div className="post image">
+                    <img
+                      src="https://elementor.com/marketing/wp-content/uploads/sites/9/2017/09/10ways3.png"
+                      alt=""
+                    />
+                  </div>
+                  <div className="post services flex justify-between mt-1 gap-2">
+                    <div className="w-full  py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                      <FaHeart className="text-red-500" />
+                      <span>99</span>
                     </div>
-                    <div className="w-1/2 flex justify-center">
-                      <button className="rounded hover:bg-gray-300 dark:hover:bg-gray-800 w-full flex justify-center items-center py-3 gap-2">
-                        <FaComment className="text-gray-700 dark:text-white" />
-                        <p>999</p>
-                      </button>
+                    <div className="w-full  py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                      <FaComment />
+                      <span>100</span>
                     </div>
-                    <div className="w-1/2 flex justify-center">
-                      <button className="rounded hover:bg-gray-300 dark:hover:bg-gray-800 w-full flex justify-center items-center py-3 gap-2">
-                        <FaShareAlt className="text-gray-700 dark:text-white" />
-                        <p>999</p>
-                      </button>
+                    <div className="w-full  py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                      <FaShareAlt />
+                      <span>999+</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <Modal
+            show={showEditProfile}
+            onClose={() => setShowEditProfile(false)}
+            popup
+            size="md"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <p>Edit profile</p>
+            </Modal.Body>
+          </Modal>
           <Modal
             show={showAvatar}
             onClose={() => setShowAvatar(false)}
@@ -125,82 +160,13 @@ export default function Profile() {
         </h2>
       )}
       {currentUser.id !== user && otherUser && (
-        <div className="container mx-auto py-5 px-4">
-          <div className="flex gap-5 items-center">
-            <div className="">
-              <img
-                onClick={handleShowAvatar}
-                src={currentUser.avatar}
-                alt="Avatar"
-                className="rounded-full hover:cursor-pointer w-16 h-16 border-2"
-              />
-            </div>
-            <div className="">{currentUser.name}</div>
-            <div>
-              <button className="bg-emerald-700 text-white hover:bg-transparent hover:text-emerald-700 px-5 py-2 rounded border-2 border-emerald-700">
-                Add friend
-              </button>
-            </div>
-          </div>
-          <hr className="mt-5" />
-          <div className="mt-5">
-            <div className="">
-              <div className="mt-3">
-                <div className="md:w-2/3 lg:w-1/2 mx-auto flex items-center gap-2 mb-3">
-                  <img
-                    src={currentUser.avatar}
-                    className="w-7 h7 rounded-full"
-                    alt=""
-                  />
-                  <span>{currentUser.name}</span>
-                </div>
-                <div className="lg:w-1/2 md:w-2/3 mx-auto mb-3">
-                  <p>post title</p>
-                </div>
-                <div className="flex justify-center">
-                  <img
-                    className="w-full h-auto rounded-lg lg:w-1/2 md:w-2/3"
-                    src="https://www.picserver.org/highway-signs2/images/status.jpg"
-                    alt=""
-                  />
-                </div>
-                <div className="mx-auto lg:w-1/2 md:w-2/3">
-                  <div className="mt-3 flex justify-between">
-                    <div className="w-1/2 flex justify-center">
-                      <button className="rounded hover:bg-gray-300 dark:hover:bg-gray-800 w-full flex justify-center items-center py-3 gap-2">
-                        <FaHeart className="text-gray-700 dark:text-white" />
-                        <p>999</p>
-                      </button>
-                    </div>
-                    <div className="w-1/2 flex justify-center">
-                      <button className="rounded hover:bg-gray-300 dark:hover:bg-gray-800 w-full flex justify-center items-center py-3 gap-2">
-                        <FaComment className="text-gray-700 dark:text-white" />
-                        <p>999</p>
-                      </button>
-                    </div>
-                    <div className="w-1/2 flex justify-center">
-                      <button className="rounded hover:bg-gray-300 dark:hover:bg-gray-800 w-full flex justify-center items-center py-3 gap-2">
-                        <FaShareAlt className="text-gray-700 dark:text-white" />
-                        <p>999</p>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <Modal
-            show={showAvatar}
-            onClose={() => setShowAvatar(false)}
-            popup
-            size="md"
-          >
-            <Modal.Header />
-            <Modal.Body>
-              <img src={currentUser.avatar} alt="Avatar" className="w-full" />
-            </Modal.Body>
-          </Modal>
-        </div>
+        <OtherProfile
+          currentUser={currentUser}
+          otherUser={otherUser}
+          showAvatar={showAvatar}
+          setShowAvatar={setShowAvatar}
+          handleShowAvatar={handleShowAvatar}
+        />
       )}
     </>
   );

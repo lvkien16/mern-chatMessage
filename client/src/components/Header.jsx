@@ -10,23 +10,23 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   return (
-    <Navbar className="border-b-2">
+    <Navbar className="border-b-2 ">
       <Link
-        to="/home"
+        to="/"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
       >
         <span>Zene</span>
       </Link>
 
       <div className="flex gap-2 md:order-2">
-        <Button
+        {/* <Button
           className="w-12 h-10 sm:inline"
           color={"gray"}
           pill
           onClick={() => dispatch(toggleTheme())}
         >
           {theme === "light" ? <FaSun /> : <FaMoon />}
-        </Button>
+        </Button> */}
         {currentUser ? (
           <Dropdown
             arrowIcon={false}
@@ -59,8 +59,8 @@ export default function Header() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link active={path === "/home"} as={"div"}>
-          <Link to="/home"> Home</Link>
+        <Navbar.Link active={path === "/"} as={"div"}>
+          <Link to="/"> Home</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/messages"} as={"div"}>
           <Link to="/messages">Messages</Link>
