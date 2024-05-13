@@ -131,17 +131,6 @@ export default function Profile() {
             </div>
           </div>
           <Modal
-            show={showEditProfile}
-            onClose={() => setShowEditProfile(false)}
-            popup
-            size="md"
-          >
-            <Modal.Header />
-            <Modal.Body>
-              <p>Edit profile</p>
-            </Modal.Body>
-          </Modal>
-          <Modal
             show={showAvatar}
             onClose={() => setShowAvatar(false)}
             popup
