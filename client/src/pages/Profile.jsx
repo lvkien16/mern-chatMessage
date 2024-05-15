@@ -94,6 +94,9 @@ export default function Profile() {
                       label={<BsThreeDotsVertical />}
                     >
                       <Dropdown.Item>
+                        <button>View detail</button>
+                      </Dropdown.Item>
+                      <Dropdown.Item>
                         <button>Edit</button>
                       </Dropdown.Item>
                       <Dropdown.Item>

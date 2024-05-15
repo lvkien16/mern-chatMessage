@@ -1,6 +1,7 @@
 import { FaPlus } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { Modal } from "flowbite-react";
+import { Modal, Alert } from "flowbite-react";
+import { CircularProgressbar } from "react-circular-progressbar";
 import { useState } from "react";
 import { RiImageAddFill } from "react-icons/ri";
 import {
@@ -10,14 +11,20 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { FaFileUpload } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
   const [showCreatePost, setShowCreatePost] = useState(false);
 
+  const [file, setFile] = useState(null);
   const [imagesUploadError, setImagesUploadError] = useState(null);
   const [imagesUploadProgress, setImagesUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
+  const [publishError, setPublishError] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleShowCreatePost = () => {
     setShowCreatePost(true);
@@ -60,6 +67,28 @@ export default function Home() {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+      if (res.ok) {
+        setPublishError(null);
+        navigate("/");
+      }
+    } catch (error) {}
+  };
+
   return (
     <>
       <div className="container mx-auto px-4">
@@ -98,29 +127,80 @@ export default function Home() {
                 <div className="">
                   <div className="">
                     <div className="">
-                      <label
-                        htmlFor="add-images"
-                        className="flex gap-3 items-center border-2 px-2 text-white bg-emerald-700 border-emerald-700 hover:bg-transparent hover:text-emerald-700 hover:cursor-pointer"
-                      >
-                        <RiImageAddFill />
-                        Add images
-                      </label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        id="add-images"
-                        multiple
-                        hidden
-                      />
-                      <div className="show selected images name"></div>
-                      <div className="show selected images"></div>
-                      <textarea
-                        className="mt-3 rounded w-full focus:border-emerald-700 text-emerald-700"
-                        name=""
-                        id=""
-                        placeholder="Write something here..."
-                      />
-                      <div className="images chooces"></div>
+                      <form onSubmit={handleSubmit}>
+                        <div className="flex justify-between">
+                          <label
+                            htmlFor="add-images"
+                            className="rounded flex gap-3 items-center border-2 px-2 text-white bg-emerald-700 border-emerald-700 hover:bg-transparent hover:text-emerald-700 hover:cursor-pointer"
+                          >
+                            <RiImageAddFill />
+                            Add images
+                          </label>
+                          <button
+                            type="button"
+                            onClick={handleUploadImages}
+                            disabled={imagesUploadProgress}
+                            className="flex items-center gap-2 text-emerald-700 border-2 border-emerald-700 px-2 hover:bg-emerald-700 hover:text-white rounded"
+                          >
+                            {imagesUploadProgress ? (
+                              <CircularProgressbar
+                                value={imagesUploadProgress}
+                                text={`${imagesUploadProgress || 0}%`}
+                              />
+                            ) : (
+                              <>
+                                <FaFileUpload />
+                                Upload
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          id="add-images"
+                          multiple
+                          hidden
+                          onChange={(e) => setFile(e.target.files[0])}
+                        />
+                        <div className="mt-3">
+                          {imagesUploadError && (
+                            <Alert color="failure">{imagesUploadError}</Alert>
+                          )}
+                          {formData.images && (
+                            <div className="mt-3">
+                              <img
+                                src={formData.images}
+                                alt=""
+                                className="w-full object-cover rounded"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="show selected images name"></div>
+                        <div className="show selected images"></div>
+                        <textarea
+                          className="mt-3 rounded w-full focus:border-emerald-700 text-emerald-700"
+                          name=""
+                          id=""
+                          placeholder="Write something here..."
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              content: e.target.value,
+                            })
+                          }
+                        />
+                        <div className="images chooces"></div>
+                        <div className="">
+                          <button
+                            type="submit"
+                            className="border-2 px-2 bg-emerald-700 text-white hover:bg-transparent hover:text-emerald-700 rounded border-emerald-700 mt-3 w-full"
+                          >
+                            Publish
+                          </button>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>
