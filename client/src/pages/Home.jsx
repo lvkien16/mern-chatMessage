@@ -18,7 +18,7 @@ export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
   const [showCreatePost, setShowCreatePost] = useState(false);
 
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState(null);
   const [imagesUploadError, setImagesUploadError] = useState(null);
   const [imagesUploadProgress, setImagesUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
@@ -32,34 +32,51 @@ export default function Home() {
 
   const handleUploadImages = async () => {
     try {
-      if (!file) {
+      if (!files || files.length === 0) {
         setImagesUploadError("Please select images to upload");
         return;
       }
       setImagesUploadError(null);
+
       const storage = getStorage(app);
-      const fileName = new Date().getTime() + "-" + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImagesUploadProgress(progress.toFixed(0));
-        },
-        (error) => {
-          setImagesUploadError("Failed to upload images");
-          setImagesUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImagesUploadProgress(null);
-            setImagesUploadError(null);
-            setFormData({ ...formData, images: downloadURL });
-          });
-        }
-      );
+      const uploadPromises = Array.from(files).map((fileItem) => {
+        const fileName = new Date().getTime() + "-" + fileItem.name;
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, fileItem);
+
+        return new Promise((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setImagesUploadProgress((prevProgress) => ({
+                ...prevProgress,
+                [fileItem.name]: progress.toFixed(0),
+              }));
+            },
+            (error) => {
+              setImagesUploadError(`Failed to upload image: ${fileItem.name}`);
+              setImagesUploadProgress(null);
+              reject(error);
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                setImagesUploadProgress(null);
+                resolve({ fileName: fileItem.name, url: downloadURL });
+              });
+            }
+          );
+        });
+      });
+
+      const downloadURLs = await Promise.all(uploadPromises);
+      const images = downloadURLs.map((item) => item.url);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        images,
+      }));
+      setImagesUploadError(null);
     } catch (error) {
       setImagesUploadError("Failed to upload images");
       setImagesUploadProgress(null);
@@ -118,9 +135,9 @@ export default function Home() {
               size="md"
             >
               <Modal.Header>
-                <h2 className="text-2xl text-center mx-auto font-bold text-emerald-700">
+                <span className="text-2xl text-center mx-auto font-bold text-emerald-700">
                   Create new post
-                </h2>
+                </span>
               </Modal.Header>
 
               <Modal.Body>
@@ -139,14 +156,13 @@ export default function Home() {
                           <button
                             type="button"
                             onClick={handleUploadImages}
-                            disabled={imagesUploadProgress}
+                            disabled={Object.values(
+                              imagesUploadProgress || {}
+                            ).some((progress) => progress !== null)}
                             className="flex items-center gap-2 text-emerald-700 border-2 border-emerald-700 px-2 hover:bg-emerald-700 hover:text-white rounded"
                           >
                             {imagesUploadProgress ? (
-                              <CircularProgressbar
-                                value={imagesUploadProgress}
-                                text={`${imagesUploadProgress || 0}%`}
-                              />
+                              <span>Uploading...</span>
                             ) : (
                               <>
                                 <FaFileUpload />
@@ -161,24 +177,35 @@ export default function Home() {
                           id="add-images"
                           multiple
                           hidden
-                          onChange={(e) => setFile(e.target.files[0])}
+                          onChange={(e) => setFiles(e.target.files)}
                         />
                         <div className="mt-3">
                           {imagesUploadError && (
                             <Alert color="failure">{imagesUploadError}</Alert>
                           )}
                           {formData.images && (
-                            <div className="mt-3">
-                              <img
-                                src={formData.images}
-                                alt=""
-                                className="w-full object-cover rounded"
-                              />
+                            <div className="mt-3 flex">
+                              {console.log(formData.images)}
                             </div>
                           )}
                         </div>
                         <div className="show selected images name"></div>
-                        <div className="show selected images"></div>
+                        <div className="show selected images">
+                          {
+                            <div className="flex gap-3">
+                              {formData.images &&
+                                formData.images.map((image, index) => (
+                                  <div key={index}>
+                                    <img
+                                      src={image}
+                                      alt=""
+                                      className="w-20 h-20 object-cover rounded"
+                                    />
+                                  </div>
+                                ))}
+                            </div>
+                          }
+                        </div>
                         <textarea
                           className="mt-3 rounded w-full focus:border-emerald-700 text-emerald-700"
                           name=""
