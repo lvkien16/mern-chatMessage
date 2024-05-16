@@ -2,7 +2,6 @@ import Post from "../models/post.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const create = async (req, res, next) => {
-  console.log(req.user);
   if (!req.user) {
     return next(errorHandler(400, "Invalid data"));
   }

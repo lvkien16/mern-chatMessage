@@ -95,13 +95,14 @@ export default function Home() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      console.log(data);
       if (!res.ok) {
         setPublishError(data.message);
         return;
       }
       if (res.ok) {
         setPublishError(null);
-        navigate("/");
+        navigate("/profile");
       }
     } catch (error) {}
   };
@@ -175,6 +176,7 @@ export default function Home() {
                           type="file"
                           accept="image/*"
                           id="add-images"
+                          name="images"
                           multiple
                           hidden
                           onChange={(e) => setFiles(e.target.files)}
@@ -192,14 +194,14 @@ export default function Home() {
                         <div className="show selected images name"></div>
                         <div className="show selected images">
                           {
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 flex-wrap">
                               {formData.images &&
                                 formData.images.map((image, index) => (
                                   <div key={index}>
                                     <img
                                       src={image}
                                       alt=""
-                                      className="w-20 h-20 object-cover rounded"
+                                      className="w-14 h-14 object-cover rounded border-2 border-gray-200"
                                     />
                                   </div>
                                 ))}
@@ -208,7 +210,7 @@ export default function Home() {
                         </div>
                         <textarea
                           className="mt-3 rounded w-full focus:border-emerald-700 text-emerald-700"
-                          name=""
+                          name="content"
                           id=""
                           placeholder="Write something here..."
                           onChange={(e) =>
