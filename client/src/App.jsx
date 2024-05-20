@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
+import Post from "./pages/Post";
 
 export default function App() {
   const path = window.location.pathname;
@@ -16,12 +17,13 @@ export default function App() {
       <Header />
       <Routes>
         <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/post/:postId" element={<Post />} />
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />

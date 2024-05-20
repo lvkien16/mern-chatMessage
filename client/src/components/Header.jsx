@@ -59,7 +59,7 @@ export default function Header() {
                 />
                 <span>{currentUser.name}</span>
               </div>
-              <Link to={`/profile?user=${currentUser._id}`}>
+              <Link to={`/profile/${currentUser._id}`}>
                 <Dropdown.Item>Profile</Dropdown.Item>
               </Link>
               <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>

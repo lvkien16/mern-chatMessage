@@ -95,14 +95,13 @@ export default function Home() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
       if (!res.ok) {
         setPublishError(data.message);
         return;
       }
       if (res.ok) {
         setPublishError(null);
-        navigate("/profile");
+        navigate(`/profile?user=${currentUser._id}&post=${data._id}`);
       }
     } catch (error) {}
   };

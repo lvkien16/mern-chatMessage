@@ -20,3 +20,23 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find({ userId: req.params.userId }).sort({
+      createdAt: -1,
+    });
+    res.json(posts);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    res.json(post);
+  } catch (error) {
+    next(error);
+  }
+};

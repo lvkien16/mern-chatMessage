@@ -1,56 +1,89 @@
 import { useSelector } from "react-redux";
-import { Dropdown, Modal } from "flowbite-react";
-import { useEffect, useState } from "react";
-import { FaHeart } from "react-icons/fa";
-import { FaComment } from "react-icons/fa";
-import { FaShareAlt } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { Modal } from "flowbite-react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import OtherProfile from "./OtherProfile";
-import { FaCaretRight } from "react-icons/fa";
-// import { avatar } from "../../public/images/avatar.png";
+import {
+  FaCaretRight,
+  FaHeart,
+  FaComment,
+  FaShareAlt,
+  FaPlus,
+} from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { Dropdown } from "flowbite-react";
 
 export default function Profile() {
   const location = useLocation();
-  const [user, setUser] = useState("");
+  const { userId } = useParams();
+  console.log(userId);
+  const [postId, setPostId] = useState("");
   const [showAvatar, setShowAvatar] = useState(false);
-  const [showEditProfile, setShowEditProfile] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
+  const [posts, setPosts] = useState([]);
+  const [showPostImage, setShowPostImage] = useState(false);
+  const [currentImgageFocus, setCurrentImageFocus] = useState({});
+  const [showMoreImages, setShowMoreImages] = useState(false);
+  const [imagesForModal, setImagesForModal] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const user = searchParams.get("user");
-    if (user) {
-      setUser(user);
-      const fetchPost = async () => {
-        const res = await fetch(`/api/user/getuser/${user}`);
+    if (userId) {
+      const fetchUser = async () => {
+        const res = await fetch(`/api/user/getuser/${userId}`);
         const data = await res.json();
         if (!res.ok) {
           return;
         } else {
-          if (currentUser._id !== user) {
+          if (currentUser._id !== userId) {
             setOtherUser(data);
           } else {
             setOtherUser(null);
           }
         }
       };
-      fetchPost();
+      fetchUser();
     }
-  }, [location.search]);
+  }, [userId, currentUser._id]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const res = await fetch(`/api/post/getposts/${userId}`);
+      const data = await res.json();
+      if (!res.ok) {
+        return;
+      } else {
+        setPosts(data);
+      }
+    };
+
+    fetchPosts();
+  }, [userId]);
+
   const handleShowAvatar = async () => {
     setShowAvatar(true);
   };
-  const handleShowEditProfile = async () => {
-    setShowEditProfile(true);
+
+  const handleShowPostImage = async () => {
+    setShowPostImage(true);
   };
+
+  const handleShowMoreImages = (images) => {
+    setImagesForModal(images);
+    setShowMoreImages(true);
+  };
+
+  const handleViewPostDetail = (postId) => {
+    navigate(`/post/${postId}`);
+  };
+
   return (
     <>
-      {currentUser._id === user && !otherUser && (
+      {currentUser._id === userId && !otherUser && (
         <div className="container mx-auto px-4">
           <div className="md:flex justify-between">
-            <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen">
+            <div className="bg-gray-300 px-2 md:w-1/3 pt-5">
               <div className="flex gap-3 items-center justify-center">
                 <img
                   src={currentUser.avatar}
@@ -74,65 +107,126 @@ export default function Profile() {
               <hr className="hidden md:block border-emerald-700" />
             </div>
             <div className="md:border-x-2 md:w-2/3 px-2 pt-5">
+              {/* Post list */}
               <div className="">
-                <div className="flex justify-between items-center">
-                  <div className="user flex items-center">
-                    <img
-                      src={currentUser.avatar}
-                      className="w-6 h-6 rounded-full bg-gray-300"
-                      alt=""
-                    />
-                    <span>
-                      <FaCaretRight />
-                    </span>
-                    <p className="font-bold"> {currentUser.name} </p>
-                  </div>
-                  <div className="about post">
-                    <Dropdown
-                      arrowIcon={false}
-                      inline
-                      label={<BsThreeDotsVertical />}
-                    >
-                      <Dropdown.Item>
-                        <button>View detail</button>
-                      </Dropdown.Item>
-                      <Dropdown.Item>
-                        <button>Edit</button>
-                      </Dropdown.Item>
-                      <Dropdown.Item>
-                        <button>Delete</button>
-                      </Dropdown.Item>
-                    </Dropdown>
-                  </div>
-                </div>
-                <div className="posts">
-                  <div className="post title py-3">
-                    <p>This is a new post</p>
-                  </div>
-                  <div className="post image">
-                    <img
-                      src="https://elementor.com/marketing/wp-content/uploads/sites/9/2017/09/10ways3.png"
-                      alt=""
-                    />
-                  </div>
-                  <div className="post services flex justify-between mt-1 gap-2">
-                    <div className="w-full  py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
-                      <FaHeart className="text-red-500" />
-                      <span>99</span>
+                {posts &&
+                  !postId &&
+                  posts.map((post) => (
+                    <div key={post._id}>
+                      <div className="flex justify-between items-center">
+                        <div className="user flex items-center">
+                          <img
+                            src={currentUser.avatar}
+                            className="w-6 h-6 rounded-full bg-gray-300"
+                            alt=""
+                          />
+                          <span>
+                            <FaCaretRight />
+                          </span>
+                          <p className="font-bold"> {currentUser.name} </p>
+                        </div>
+                        <div className="about post">
+                          <Dropdown
+                            arrowIcon={false}
+                            inline
+                            label={<BsThreeDotsVertical />}
+                          >
+                            <Dropdown.Item
+                              onClick={() => {
+                                handleViewPostDetail(post._id);
+                              }}
+                            >
+                              <span>View detail</span>
+                            </Dropdown.Item>
+                            <Dropdown.Item>
+                              <span>Edit</span>
+                            </Dropdown.Item>
+                            <Dropdown.Item>
+                              <span>Delete</span>
+                            </Dropdown.Item>
+                          </Dropdown>
+                        </div>
+                      </div>
+                      <div className="posts">
+                        <div className="post title py-3">
+                          <p>{post.content}</p>
+                        </div>
+                        <div className="post image flex relative">
+                          {post.images &&
+                            post.images.map((image, index) => (
+                              <React.Fragment key={index}>
+                                <img
+                                  onClick={() => {
+                                    setCurrentImageFocus(image);
+                                    handleShowPostImage();
+                                  }}
+                                  src={image}
+                                  alt=""
+                                  className={`${
+                                    post.images.length === 1
+                                      ? "w-auto mx-auto max-w-full"
+                                      : post.images.length === 2
+                                      ? "w-1/2"
+                                      : post.images.length === 3
+                                      ? "w-1/3"
+                                      : post.images.length === 4
+                                      ? "w-1/4"
+                                      : "w-1/4"
+                                  } ${
+                                    index > 3 ? "hidden" : ""
+                                  } h-auto max-h-480 border-2 border-gray-200 rounded hover:cursor-pointer`}
+                                />
+                                {post.images.length > 4 && index === 4 && (
+                                  <div
+                                    onClick={() =>
+                                      handleShowMoreImages(post.images)
+                                    }
+                                    className="absolute top-0 right-0 w-1/4 h-full flex items-center justify-center font-bold text-3xl md:text-5xl bg-gray-300 bg-opacity-70 text-emerald-700 cursor-pointer rounded"
+                                  >
+                                    <FaPlus /> {post.images.length - 3}
+                                  </div>
+                                )}
+                              </React.Fragment>
+                            ))}
+                        </div>
+                        <div className="post services flex justify-between mb-3 border-2 border-t-0 rounded">
+                          <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                            <FaHeart className="text-red-500" />
+                            <span>99</span>
+                          </div>
+                          <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                            <FaComment />
+                            <span>100</span>
+                          </div>
+                          <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                            <FaShareAlt />
+                            <span>999+</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="w-full  py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
-                      <FaComment />
-                      <span>100</span>
-                    </div>
-                    <div className="w-full  py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
-                      <FaShareAlt />
-                      <span>999+</span>
-                    </div>
-                  </div>
-                </div>
+                  ))}
               </div>
             </div>
           </div>
+          {/* show post's image */}
+          <Modal
+            show={showPostImage}
+            onClose={() => setShowPostImage(false)}
+            popup
+            size="xl"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <img
+                src={currentImgageFocus}
+                alt="Post image"
+                className="w-full"
+              />
+            </Modal.Body>
+          </Modal>
+
+          {/* show avatar */}
           <Modal
             show={showAvatar}
             onClose={() => setShowAvatar(false)}
@@ -144,21 +238,29 @@ export default function Profile() {
               <img src={currentUser.avatar} alt="Avatar" className="w-full" />
             </Modal.Body>
           </Modal>
+
+          {/* show more images */}
+          <Modal
+            show={showMoreImages}
+            onClose={() => setShowMoreImages(false)}
+            popup
+            size="xl"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div>
+                {imagesForModal.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt=""
+                    className="w-full h-auto mb-3"
+                  />
+                ))}
+              </div>
+            </Modal.Body>
+          </Modal>
         </div>
-      )}
-      {currentUser._id !== user && !otherUser && (
-        <h2 className="text-3xl text-center mt-5 text-emerald-700">
-          User not found
-        </h2>
-      )}
-      {currentUser.id !== user && otherUser && (
-        <OtherProfile
-          currentUser={currentUser}
-          otherUser={otherUser}
-          showAvatar={showAvatar}
-          setShowAvatar={setShowAvatar}
-          handleShowAvatar={handleShowAvatar}
-        />
       )}
     </>
   );
