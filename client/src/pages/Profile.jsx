@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Modal } from "flowbite-react";
+import { Modal, Dropdown } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import OtherProfile from "./OtherProfile";
@@ -11,12 +11,10 @@ import {
   FaPlus,
 } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { Dropdown } from "flowbite-react";
 
 export default function Profile() {
   const location = useLocation();
   const { userId } = useParams();
-  console.log(userId);
   const [postId, setPostId] = useState("");
   const [showAvatar, setShowAvatar] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
@@ -33,9 +31,7 @@ export default function Profile() {
       const fetchUser = async () => {
         const res = await fetch(`/api/user/getuser/${userId}`);
         const data = await res.json();
-        if (!res.ok) {
-          return;
-        } else {
+        if (res.ok) {
           if (currentUser._id !== userId) {
             setOtherUser(data);
           } else {
@@ -51,9 +47,7 @@ export default function Profile() {
     const fetchPosts = async () => {
       const res = await fetch(`/api/post/getposts/${userId}`);
       const data = await res.json();
-      if (!res.ok) {
-        return;
-      } else {
+      if (res.ok) {
         setPosts(data);
       }
     };
@@ -61,11 +55,11 @@ export default function Profile() {
     fetchPosts();
   }, [userId]);
 
-  const handleShowAvatar = async () => {
+  const handleShowAvatar = () => {
     setShowAvatar(true);
   };
 
-  const handleShowPostImage = async () => {
+  const handleShowPostImage = () => {
     setShowPostImage(true);
   };
 
@@ -76,6 +70,30 @@ export default function Profile() {
 
   const handleViewPostDetail = (postId) => {
     navigate(`/post/${postId}`);
+  };
+
+  const handleLikePost = async (id) => {
+    try {
+      const res = await fetch(`/api/post/like/${id}/${currentUser._id}`, {
+        method: "PUT",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === id
+              ? {
+                  ...post,
+                  likes: data.likes,
+                  numberOfLikes: data.likes.length,
+                }
+              : post
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -190,17 +208,26 @@ export default function Profile() {
                             ))}
                         </div>
                         <div className="post services flex justify-between mb-3 border-2 border-t-0 rounded">
-                          <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
-                            <FaHeart className="text-red-500" />
-                            <span>99</span>
+                          <div
+                            className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
+                            onClick={() => handleLikePost(post._id)}
+                          >
+                            <FaHeart
+                              className={`${
+                                currentUser._id &&
+                                post.likes.includes(currentUser._id) &&
+                                "!text-red-500"
+                              }`}
+                            />
+                            <span>{post.numberOfLikes}</span>
                           </div>
                           <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                             <FaComment />
-                            <span>100</span>
+                            <span>{post.numberOfComments}</span>
                           </div>
                           <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                             <FaShareAlt />
-                            <span>999+</span>
+                            <span>{post.numberOfShares}</span>
                           </div>
                         </div>
                       </div>
@@ -261,6 +288,29 @@ export default function Profile() {
             </Modal.Body>
           </Modal>
         </div>
+      )}
+      {otherUser && (
+        <OtherProfile
+          currentUser={currentUser}
+          otherUser={otherUser}
+          showAvatar={showAvatar}
+          setShowAvatar={setShowAvatar}
+          handleShowAvatar={handleShowAvatar}
+          posts={posts}
+          postId={postId}
+          setCurrentImageFocus={setCurrentImageFocus}
+          handleShowPostImage={handleShowPostImage}
+          showPostImage={showPostImage}
+          showMoreImages={showMoreImages}
+          handleShowMoreImages={handleShowMoreImages}
+          imagesForModal={imagesForModal}
+          setImagesForModal={setImagesForModal}
+          handleViewPostDetail={handleViewPostDetail}
+          currentImgageFocus={currentImgageFocus}
+          setShowPostImage={setShowPostImage}
+          setShowMoreImages={setShowMoreImages}
+          handleLikePost={handleLikePost}
+        />
       )}
     </>
   );

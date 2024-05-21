@@ -101,7 +101,7 @@ export default function Home() {
       }
       if (res.ok) {
         setPublishError(null);
-        navigate(`/profile?user=${currentUser._id}&post=${data._id}`);
+        navigate(`/post/${data._id}`);
       }
     } catch (error) {}
   };
