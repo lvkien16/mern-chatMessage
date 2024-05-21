@@ -21,6 +21,30 @@ const postSchema = new mongoose.Schema(
     comments: {
       type: Array,
       default: [],
+      userId: {
+        type: String,
+        required: true,
+      },
+      userName: {
+        type: String,
+        required: true,
+      },
+      userAvatar: {
+        type: String,
+        required: true,
+      },
+      content: {
+        type: String,
+        required: true,
+      },
+      numberOfLikes: {
+        type: Number,
+        default: 0,
+      },
+      likes: {
+        type: Array,
+        default: [],
+      },
     },
     shares: {
       type: Array,

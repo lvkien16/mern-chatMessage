@@ -146,6 +146,16 @@ export default function Post() {
               <span>{post.numberOfShares}</span>
             </div>
           </div>
+          <div className="">
+            <div className="comments">
+              {post.comments &&
+                post.comments.map((comment, index) => (
+                  <div key={index} className="comment">
+                    <p>{comment.content}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
         </div>
       </div>
     </>

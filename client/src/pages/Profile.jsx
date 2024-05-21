@@ -24,6 +24,7 @@ export default function Profile() {
   const [currentImgageFocus, setCurrentImageFocus] = useState({});
   const [showMoreImages, setShowMoreImages] = useState(false);
   const [imagesForModal, setImagesForModal] = useState([]);
+  const [formDataComment, setFormDataComment] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,6 +91,46 @@ export default function Profile() {
               : post
           )
         );
+        setFormDataComment({
+          content: "",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmitComment = async (e, postId) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(
+        `/api/post/comment/${postId}/${currentUser._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            content: formDataComment.content,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+        setFormDataComment({ content: "" });
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  comments: data.comments,
+                  numberOfComments: data.comments.length,
+                }
+              : post
+          )
+        );
+        navigate(`/post/${postId}`);
       }
     } catch (error) {
       console.log(error);
@@ -207,7 +248,7 @@ export default function Profile() {
                               </React.Fragment>
                             ))}
                         </div>
-                        <div className="post services flex justify-between mb-3 border-2 border-t-0 rounded">
+                        <div className="post services flex justify-between mb-1 border-2 border-t-0 rounded">
                           <div
                             className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
                             onClick={() => handleLikePost(post._id)}
@@ -229,6 +270,37 @@ export default function Profile() {
                             <FaShareAlt />
                             <span>{post.numberOfShares}</span>
                           </div>
+                        </div>
+                        <div className=" mb-7 ">
+                          <form
+                            onSubmit={(e) => {
+                              handleSubmitComment(e, post._id);
+                            }}
+                            className="flex"
+                          >
+                            <img
+                              src={currentUser.avatar}
+                              className="w-10 h-10 rounded-full bg-gray-300 mr-3"
+                              alt=""
+                            />
+                            <textarea
+                              required
+                              name="content"
+                              value={formDataComment.content}
+                              rows={1}
+                              placeholder={`Comment...`}
+                              className="rounded-full w-full px-2 resize-none"
+                              onChange={(e) =>
+                                setFormDataComment({
+                                  ...formDataComment,
+                                  content: e.target.value,
+                                })
+                              }
+                            />
+                            <button className="rounded bg-emerald-700 hover:bg-transparent text-white hover:text-emerald-700 border-2 px-3">
+                              Send
+                            </button>
+                          </form>
                         </div>
                       </div>
                     </div>

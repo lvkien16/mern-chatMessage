@@ -13,6 +13,7 @@ export const create = async (req, res, next) => {
     content: req.body.content,
     images: req.body.images,
   });
+  console.log(req.user);
   try {
     const savedPost = await post.save();
     res.status(201).json(savedPost);
@@ -55,6 +56,26 @@ export const likePost = async (req, res, next) => {
       post.numberOfLikes -= 1;
       post.likes.splice(userIndex, 1);
     }
+    await post.save();
+    res.status(200).json(post);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const commentPost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return next(errorHandler(404, "Post not found"));
+    }
+    post.numberOfComments += 1;
+    post.comments.push({
+      userId: req.user.id,
+      content: req.body.content,
+      userName: req.user.name,
+      userAvatar: req.user.avatar,
+    });
     await post.save();
     res.status(200).json(post);
   } catch (error) {

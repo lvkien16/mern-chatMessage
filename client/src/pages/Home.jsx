@@ -103,7 +103,9 @@ export default function Home() {
         setPublishError(null);
         navigate(`/post/${data._id}`);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
