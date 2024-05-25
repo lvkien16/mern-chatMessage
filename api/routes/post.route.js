@@ -1,7 +1,8 @@
 import express from "express";
 import {
-  commentPost,
   create,
+  deletePost,
+  editPost,
   getPost,
   getPosts,
   likePost,
@@ -14,6 +15,7 @@ router.post("/create", verifyToken, create);
 router.get("/getposts/:userId", verifyToken, getPosts);
 router.get("/getpost/:postId", verifyToken, getPost);
 router.put("/like/:postId/:userId", verifyToken, likePost);
-router.put("/comment/:postId/:userId", verifyToken, commentPost);
+router.put("/edit/:postId", verifyToken, editPost);
+router.delete("/delete/:postId", verifyToken, deletePost);
 
 export default router;

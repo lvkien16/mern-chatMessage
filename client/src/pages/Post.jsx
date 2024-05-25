@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import CommentSection from "../components/CommentSection";
 
 export default function Post() {
   const { postId } = useParams();
@@ -139,22 +140,13 @@ export default function Post() {
             </div>
             <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
               <FaComment />
-              <span>{post.numberOfComments}</span>
             </div>
             <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
               <FaShareAlt />
-              <span>{post.numberOfShares}</span>
             </div>
           </div>
-          <div className="">
-            <div className="comments">
-              {post.comments &&
-                post.comments.map((comment, index) => (
-                  <div key={index} className="comment">
-                    <p>{comment.content}</p>
-                  </div>
-                ))}
-            </div>
+          <div className="write comment">
+            <CommentSection postId={postId} />
           </div>
         </div>
       </div>

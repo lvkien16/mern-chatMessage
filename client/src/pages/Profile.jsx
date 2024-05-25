@@ -11,6 +11,7 @@ import {
   FaPlus,
 } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { IoClose } from "react-icons/io5";
 
 export default function Profile() {
   const location = useLocation();
@@ -21,14 +22,18 @@ export default function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   const [posts, setPosts] = useState([]);
   const [showPostImage, setShowPostImage] = useState(false);
-  const [currentImgageFocus, setCurrentImageFocus] = useState({});
+  const [currentImageFocus, setCurrentImageFocus] = useState({});
   const [showMoreImages, setShowMoreImages] = useState(false);
   const [imagesForModal, setImagesForModal] = useState([]);
-  const [formDataComment, setFormDataComment] = useState({});
+  const [likePost, setLikePost] = useState(false);
+  const [showEditPost, setShowEditPost] = useState(false);
+  const [showDeletePost, setShowDeletePost] = useState(false);
+  const [dataToEdit, setDataToEdit] = useState({});
+  const [postIdToDelete, setPostIdToDelete] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userId) {
+    if (userId && currentUser._id) {
       const fetchUser = async () => {
         const res = await fetch(`/api/user/getuser/${userId}`);
         const data = await res.json();
@@ -45,16 +50,18 @@ export default function Profile() {
   }, [userId, currentUser._id]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await fetch(`/api/post/getposts/${userId}`);
-      const data = await res.json();
-      if (res.ok) {
-        setPosts(data);
-      }
-    };
+    if (userId) {
+      const fetchPosts = async () => {
+        const res = await fetch(`/api/post/getposts/${userId}`);
+        const data = await res.json();
+        if (res.ok) {
+          setPosts(data);
+        }
+      };
 
-    fetchPosts();
-  }, [userId]);
+      fetchPosts();
+    }
+  }, [userId, likePost]);
 
   const handleShowAvatar = () => {
     setShowAvatar(true);
@@ -73,6 +80,14 @@ export default function Profile() {
     navigate(`/post/${postId}`);
   };
 
+  const handleShowEditPost = () => {
+    setShowEditPost(true);
+  };
+
+  const handleShowDeletePost = () => {
+    setShowDeletePost(true);
+  };
+
   const handleLikePost = async (id) => {
     try {
       const res = await fetch(`/api/post/like/${id}/${currentUser._id}`, {
@@ -80,57 +95,62 @@ export default function Profile() {
       });
       if (res.ok) {
         const data = await res.json();
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post._id === id
+        setPosts(
+          posts.map((post) =>
+            post.id === id
               ? {
                   ...post,
                   likes: data.likes,
-                  numberOfLikes: data.likes.length,
+                  numberOfLikes: data.numberOfLikes.length,
                 }
               : post
           )
         );
-        setFormDataComment({
-          content: "",
-        });
+      }
+      setLikePost(!likePost);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmitDeletePost = async (id) => {
+    try {
+      const res = await fetch(`/api/post/delete/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setShowDeletePost(false);
+        setPosts(posts.filter((post) => post._id !== id));
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleSubmitComment = async (e, postId) => {
+  const handleSubmitEditPost = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(
-        `/api/post/comment/${postId}/${currentUser._id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            content: formDataComment.content,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`/api/post/edit/${dataToEdit._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToEdit),
+      });
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
-        setFormDataComment({ content: "" });
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post._id === postId
+        setPosts(
+          posts.map((post) =>
+            post._id === data._id
               ? {
                   ...post,
-                  comments: data.comments,
-                  numberOfComments: data.comments.length,
+                  content: data.content,
+                  images: data.images,
                 }
               : post
           )
         );
-        navigate(`/post/${postId}`);
+        setShowEditPost(false);
       }
     } catch (error) {
       console.log(error);
@@ -197,10 +217,20 @@ export default function Profile() {
                             >
                               <span>View detail</span>
                             </Dropdown.Item>
-                            <Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => {
+                                handleShowEditPost();
+                                setDataToEdit(post);
+                              }}
+                            >
                               <span>Edit</span>
                             </Dropdown.Item>
-                            <Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => {
+                                handleShowDeletePost();
+                                setPostIdToDelete(post._id);
+                              }}
+                            >
                               <span>Delete</span>
                             </Dropdown.Item>
                           </Dropdown>
@@ -255,52 +285,24 @@ export default function Profile() {
                           >
                             <FaHeart
                               className={`${
-                                currentUser._id &&
-                                post.likes.includes(currentUser._id) &&
-                                "!text-red-500"
+                                post.likes.includes(currentUser._id)
+                                  ? "text-red-500"
+                                  : ""
                               }`}
                             />
                             <span>{post.numberOfLikes}</span>
                           </div>
-                          <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                          <div
+                            onClick={() => {
+                              handleViewPostDetail(post._id);
+                            }}
+                            className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
+                          >
                             <FaComment />
-                            <span>{post.numberOfComments}</span>
                           </div>
                           <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                             <FaShareAlt />
-                            <span>{post.numberOfShares}</span>
                           </div>
-                        </div>
-                        <div className=" mb-7 ">
-                          <form
-                            onSubmit={(e) => {
-                              handleSubmitComment(e, post._id);
-                            }}
-                            className="flex"
-                          >
-                            <img
-                              src={currentUser.avatar}
-                              className="w-10 h-10 rounded-full bg-gray-300 mr-3"
-                              alt=""
-                            />
-                            <textarea
-                              required
-                              name="content"
-                              value={formDataComment.content}
-                              rows={1}
-                              placeholder={`Comment...`}
-                              className="rounded-full w-full px-2 resize-none"
-                              onChange={(e) =>
-                                setFormDataComment({
-                                  ...formDataComment,
-                                  content: e.target.value,
-                                })
-                              }
-                            />
-                            <button className="rounded bg-emerald-700 hover:bg-transparent text-white hover:text-emerald-700 border-2 px-3">
-                              Send
-                            </button>
-                          </form>
                         </div>
                       </div>
                     </div>
@@ -318,7 +320,7 @@ export default function Profile() {
             <Modal.Header />
             <Modal.Body>
               <img
-                src={currentImgageFocus}
+                src={currentImageFocus}
                 alt="Post image"
                 className="w-full"
               />
@@ -359,6 +361,76 @@ export default function Profile() {
               </div>
             </Modal.Body>
           </Modal>
+
+          {/* show edit post */}
+          <Modal
+            show={showEditPost}
+            onClose={() => setShowEditPost(false)}
+            popup
+            size="xl"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <form onSubmit={handleSubmitEditPost}>
+                <textarea
+                  name="content"
+                  className="w-full h-48 border-2 rounded p-2"
+                  placeholder="What's on your mind?"
+                  value={dataToEdit.content}
+                  onChange={(e) =>
+                    setDataToEdit({ ...dataToEdit, content: e.target.value })
+                  }
+                />
+                <div className="flex gap-2 flex-wrap">
+                  {dataToEdit.images &&
+                    dataToEdit.images.map((image, index) => (
+                      <div key={index} className="w-20 h-auto relative">
+                        <img src={image} alt="" className="w-full h-full" />
+                        <span className="absolute top-0 right-0 p-1 bg-gray-200">
+                          <IoClose />
+                        </span>
+                      </div>
+                    ))}
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-700 text-white rounded py-2 mt-2"
+                >
+                  Edit
+                </button>
+              </form>
+            </Modal.Body>
+          </Modal>
+
+          {/* show delete post */}
+          <Modal
+            show={showDeletePost}
+            onClose={() => setShowDeletePost(false)}
+            popup
+            size="md"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div className="text-center">
+                <p>Are you sure you want to delete this post?</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSubmitDeletePost(postIdToDelete);
+                  }}
+                  className="bg-red-500 text-white rounded py-1 px-3 mt-2"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setShowDeletePost(false)}
+                  className="bg-gray-300 text-black rounded py-1 px-3 mt-2 ml-2"
+                >
+                  No
+                </button>
+              </div>
+            </Modal.Body>
+          </Modal>
         </div>
       )}
       {otherUser && (
@@ -378,7 +450,7 @@ export default function Profile() {
           imagesForModal={imagesForModal}
           setImagesForModal={setImagesForModal}
           handleViewPostDetail={handleViewPostDetail}
-          currentImgageFocus={currentImgageFocus}
+          currentImageFocus={currentImageFocus}
           setShowPostImage={setShowPostImage}
           setShowMoreImages={setShowMoreImages}
           handleLikePost={handleLikePost}

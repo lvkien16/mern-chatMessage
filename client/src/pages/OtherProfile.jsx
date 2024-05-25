@@ -20,7 +20,7 @@ export default function OtherProfile({
   setCurrentImageFocus,
   handleShowPostImage,
   showPostImage,
-  currentImgageFocus,
+  currentImageFocus,
   showMoreImages,
   setShowMoreImages,
   imagesForModal,
@@ -85,9 +85,7 @@ export default function OtherProfile({
                           label={<BsThreeDotsVertical />}
                         >
                           <Dropdown.Item
-                            onClick={() => {
-                              handleViewPostDetail(post._id);
-                            }}
+                            onClick={() => handleViewPostDetail(post._id)}
                           >
                             <span>View detail</span>
                           </Dropdown.Item>
@@ -130,7 +128,7 @@ export default function OtherProfile({
                                   }
                                   className="absolute top-0 right-0 w-1/4 h-full flex items-center justify-center font-bold text-3xl md:text-5xl bg-gray-300 bg-opacity-70 text-emerald-700 cursor-pointer rounded"
                                 >
-                                  <FaPlus /> {post.images.length - 3}
+                                  <FaPlus /> {post.images.length - 4}
                                 </div>
                               )}
                             </React.Fragment>
@@ -139,18 +137,25 @@ export default function OtherProfile({
                       <div className="post services flex justify-between mb-3 border-2 border-t-0 rounded">
                         <div
                           className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
-                          onClick={handleLikePost}
+                          onClick={() => handleLikePost(post._id)}
                         >
-                          <FaHeart className="" />
+                          <FaHeart
+                            className={`${
+                              currentUser._id &&
+                              post.likes.includes(currentUser._id) &&
+                              "!text-red-500"
+                            }`}
+                          />
                           <span>{post.numberOfLikes}</span>
                         </div>
-                        <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
+                        <div
+                          onClick={() => handleViewPostDetail(post._id)}
+                          className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
+                        >
                           <FaComment />
-                          <span>{post.numberOfComments}</span>
                         </div>
                         <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                           <FaShareAlt />
-                          <span>{post.numberOfShares}</span>
                         </div>
                       </div>
                     </div>
@@ -173,6 +178,7 @@ export default function OtherProfile({
           </Modal.Body>
         </Modal>
 
+        {/* show post image */}
         <Modal
           show={showPostImage}
           onClose={() => setShowPostImage(false)}
@@ -181,7 +187,7 @@ export default function OtherProfile({
         >
           <Modal.Header />
           <Modal.Body>
-            <img src={currentImgageFocus} alt="Post image" className="w-full" />
+            <img src={currentImageFocus} alt="Post image" className="w-full" />
           </Modal.Body>
         </Modal>
 

@@ -63,21 +63,34 @@ export const likePost = async (req, res, next) => {
   }
 };
 
-export const commentPost = async (req, res, next) => {
+export const editPost = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.postId);
     if (!post) {
       return next(errorHandler(404, "Post not found"));
     }
-    post.numberOfComments += 1;
-    post.comments.push({
-      userId: req.user.id,
-      content: req.body.content,
-      userName: req.user.name,
-      userAvatar: req.user.avatar,
-    });
+    if (req.user.id !== post.userId) {
+      return next(errorHandler(403, "You can only edit your own posts"));
+    }
+    post.content = req.body.content;
     await post.save();
-    res.status(200).json(post);
+    res.json(post);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return next(errorHandler(404, "Post not found"));
+    }
+    if (req.user.id !== post.userId) {
+      return next(errorHandler(403, "You can only delete your own posts"));
+    }
+    await Post.findByIdAndDelete(req.params.postId);
+    res.status(200).json("Post deleted");
   } catch (error) {
     next(error);
   }
