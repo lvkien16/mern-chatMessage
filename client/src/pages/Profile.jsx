@@ -25,12 +25,16 @@ export default function Profile() {
   const [currentImageFocus, setCurrentImageFocus] = useState({});
   const [showMoreImages, setShowMoreImages] = useState(false);
   const [imagesForModal, setImagesForModal] = useState([]);
-  const [likePost, setLikePost] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
   const [showDeletePost, setShowDeletePost] = useState(false);
   const [dataToEdit, setDataToEdit] = useState({});
   const [postIdToDelete, setPostIdToDelete] = useState("");
+  const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
+
+  const refreshFriendRequests = () => {
+    setRefresh((prevRefresh) => !prevRefresh);
+  };
 
   useEffect(() => {
     if (userId && currentUser._id) {
@@ -61,7 +65,7 @@ export default function Profile() {
 
       fetchPosts();
     }
-  }, [userId, likePost]);
+  }, [userId, refresh]);
 
   const handleShowAvatar = () => {
     setShowAvatar(true);
@@ -107,7 +111,7 @@ export default function Profile() {
           )
         );
       }
-      setLikePost(!likePost);
+      refreshFriendRequests();
     } catch (error) {
       console.log(error);
     }
@@ -454,6 +458,7 @@ export default function Profile() {
           setShowPostImage={setShowPostImage}
           setShowMoreImages={setShowMoreImages}
           handleLikePost={handleLikePost}
+          refreshFriendRequests={refreshFriendRequests}
         />
       )}
     </>

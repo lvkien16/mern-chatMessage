@@ -44,17 +44,21 @@ export default function Header() {
         >
           {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button> */}
-        <div className="flex md:pr-10 items-center">
+        <form className="flex md:pr-10 items-center">
           <input
             type="text"
+            name="search"
             className="w-40 md:w-52 rounded-full rounded-r-none py-1 h-8"
             placeholder={`Search`}
           />
 
-          <button className="border border-emerald-700 border-l-0 w-10 md:w-14 h-8 flex items-center rounded-full rounded-l-none justify-center hover:bg-emerald-700 hover:text-white">
+          <button
+            type="submit"
+            className="border border-emerald-700 border-l-0 w-10 md:w-14 h-8 flex items-center rounded-full rounded-l-none justify-center hover:bg-emerald-700 hover:text-white"
+          >
             <CiSearch />
           </button>
-        </div>
+        </form>
         {currentUser ? (
           <Dropdown
             arrowIcon={false}

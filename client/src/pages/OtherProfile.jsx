@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaHeart,
   FaComment,
@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { Dropdown, Modal } from "flowbite-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { IoCheckmark } from "react-icons/io5";
 
 export default function OtherProfile({
   currentUser,
@@ -28,9 +29,42 @@ export default function OtherProfile({
   handleViewPostDetail,
   setShowPostImage,
   handleLikePost,
+  refreshFriendRequests,
 }) {
+  const [friend, setFriend] = useState({});
+  useEffect(() => {
+    const fetchGetFriend = async () => {
+      try {
+        const response = await fetch(
+          `/api/friend/get-friend/${currentUser._id}`
+        );
+        const data = await response.json();
+        setFriend(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchGetFriend();
+  }, [currentUser, refreshFriendRequests]);
+
   const handleAddFriend = async (friendId) => {
-    console.log(friendId);
+    if (friend.friends && friend.friends.includes(friendId)) return;
+    try {
+      const res = await fetch(`/api/friend/add-friend/${friendId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ friendId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return console.log("error");
+      }
+      refreshFriendRequests();
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
@@ -62,7 +96,17 @@ export default function OtherProfile({
                 }}
                 className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700"
               >
-                Add friend
+                {friend.requested &&
+                friend.requested.includes(otherUser._id) ? (
+                  <span>Cancel request</span>
+                ) : friend.friends && friend.friends.includes(otherUser._id) ? (
+                  <span className="flex items-center gap-1">
+                    Friend
+                    <IoCheckmark />
+                  </span>
+                ) : (
+                  <span>Add friend</span>
+                )}
               </button>
               <button className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700">
                 Message

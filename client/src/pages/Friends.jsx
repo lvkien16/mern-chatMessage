@@ -1,12 +1,31 @@
-import React, { useState } from "react";
-import { IoCheckmark } from "react-icons/io5";
-import { BiMessageRounded } from "react-icons/bi";
-import { Link } from "react-router-dom";
-import { MdDeleteOutline } from "react-icons/md";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import FriendRequests from "../components/friends/FriendRequests";
+import ListFriends from "../components/friends/ListFriends";
 
 export default function Friends() {
   const [friendButton, setFriendButton] = useState(true);
   const [requestButton, setRequestButton] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [listFriends, setListFriends] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    const fetchGetFriend = async () => {
+      try {
+        const response = await fetch(
+          `/api/friend/get-friend/${currentUser._id}`
+        );
+        const data = await response.json();
+        setFriendRequests([...data.requested]);
+        setListFriends([...data.friends]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchGetFriend();
+  }, [currentUser, refresh]);
 
   const handleFriendButton = () => {
     setFriendButton(true);
@@ -17,9 +36,14 @@ export default function Friends() {
     setRequestButton(true);
     setFriendButton(false);
   };
+
+  const refreshFriendRequests = () => {
+    setRefresh((prevRefresh) => !prevRefresh);
+  };
+
   return (
     <>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 min-h-screen">
         <div className={`md:hidden flex gap-3 my-5 }`}>
           <button
             onClick={handleFriendButton}
@@ -42,7 +66,7 @@ export default function Friends() {
         </div>
         <div className="md:flex justify-between">
           <div
-            className={`md:w-1/2 bg-gray-200 px-2 ${
+            className={`md:w-1/2 px-2 bg-gray-200 min-h-screen ${
               friendButton ? "" : "hidden md:block"
             } `}
           >
@@ -50,50 +74,19 @@ export default function Friends() {
               Friends
             </h3>
             <div className="">
-              <div className="flex items-center gap-2 mb-5">
-                <Link className="flex items-center gap-2 hover:bg-gray-400 w-full rounded-l-full">
-                  <img
-                    src="https://image.freepik.com/free-vector/user-icon_126283-435.jpg"
-                    alt=""
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <span className="font-bold">John Doe</span>
-                </Link>
-                <div className="flex gap-2 ms-auto">
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Friend</span>
-                    <IoCheckmark className="text-xl" />
-                  </button>
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Message</span>
-                    <BiMessageRounded className="text-xl" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mb-5">
-                <Link className="flex items-center gap-2 hover:bg-gray-400 w-full rounded-l-full">
-                  <img
-                    src="https://image.freepik.com/free-vector/user-icon_126283-435.jpg"
-                    alt=""
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <span className="font-bold">John Doe</span>
-                </Link>
-                <div className="flex gap-2 ms-auto">
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Friend</span>
-                    <IoCheckmark className="text-xl" />
-                  </button>
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Message</span>
-                    <BiMessageRounded className="text-xl" />
-                  </button>
-                </div>
-              </div>
+              {listFriends.length === 0 ? (
+                <h5 className="text-center font-semibold">
+                  No have friends yet.
+                </h5>
+              ) : (
+                listFriends.map((friend, index) => (
+                  <ListFriends key={index} friend={friend} />
+                ))
+              )}
             </div>
           </div>
           <div
-            className={`md:w-1/2 px-2 ${
+            className={`md:w-1/2 px-2  ${
               requestButton ? "" : "hidden md:block"
             }`}
           >
@@ -101,46 +94,19 @@ export default function Friends() {
               Friend requests
             </h3>
             <div className="">
-              <div className="flex items-center gap-2 mb-5">
-                <Link className="flex items-center gap-2 hover:bg-gray-400 w-full rounded-l-full">
-                  <img
-                    src="https://image.freepik.com/free-vector/user-icon_126283-435.jpg"
-                    alt=""
-                    className="w-12 h-12 rounded-full"
+              {friendRequests.length === 0 ? (
+                <h5 className="font-semibold text-center">
+                  No have friend requests yet.
+                </h5>
+              ) : (
+                friendRequests.map((friend, index) => (
+                  <FriendRequests
+                    key={index}
+                    friend={friend}
+                    refreshFriendRequests={refreshFriendRequests}
                   />
-                  <span className="font-bold">John Doe</span>
-                </Link>
-                <div className="flex gap-2 ms-auto">
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Confirm</span>
-                    <IoCheckmark className="text-xl" />
-                  </button>
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Delete</span>
-                    <MdDeleteOutline className="text-xl" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mb-5">
-                <Link className="flex items-center gap-2 hover:bg-gray-400 w-full rounded-l-full">
-                  <img
-                    src="https://image.freepik.com/free-vector/user-icon_126283-435.jpg"
-                    alt=""
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <span className="font-bold">John Doe</span>
-                </Link>
-                <div className="flex gap-2 ms-auto">
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Confirm</span>
-                    <IoCheckmark className="text-xl" />
-                  </button>
-                  <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
-                    <span>Delete</span>
-                    <MdDeleteOutline className="text-xl" />
-                  </button>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
         </div>
