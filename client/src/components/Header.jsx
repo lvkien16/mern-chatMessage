@@ -35,7 +35,7 @@ export default function Header() {
         <span>Zene</span>
       </Link>
 
-      <div className="flex gap-2 md:order-2">
+      <div className="flex justify-end gap-1 md:order-2 w-4/5 md:w-auto">
         {/* <Button
           className="w-12 h-10 sm:inline"
           color={"gray"}
@@ -44,9 +44,17 @@ export default function Header() {
         >
           {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button> */}
-        <button className="border-2 border-emerald-700 rounded-full w-10 h-10 flex items-center justify-center hover:bg-emerald-700 hover:text-white">
-          <CiSearch />
-        </button>
+        <div className="flex md:pr-10 items-center">
+          <input
+            type="text"
+            className="w-40 md:w-52 rounded-full rounded-r-none py-1 h-8"
+            placeholder={`Search`}
+          />
+
+          <button className="border border-emerald-700 border-l-0 w-10 md:w-14 h-8 flex items-center rounded-full rounded-l-none justify-center hover:bg-emerald-700 hover:text-white">
+            <CiSearch />
+          </button>
+        </div>
         {currentUser ? (
           <Dropdown
             arrowIcon={false}
@@ -78,6 +86,7 @@ export default function Header() {
         )}
         <Navbar.Toggle />
       </div>
+
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/"> Home</Link>
