@@ -29,6 +29,9 @@ export default function OtherProfile({
   setShowPostImage,
   handleLikePost,
 }) {
+  const handleAddFriend = async (friendId) => {
+    console.log(friendId);
+  };
   return (
     <>
       <div className="container mx-auto px-4">
@@ -52,7 +55,13 @@ export default function OtherProfile({
             <hr className="hidden md:block border-emerald-700" />
 
             <div className="flex justify-center gap-5 my-5">
-              <button className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700">
+              <button
+                type="button"
+                onClick={() => {
+                  handleAddFriend(otherUser._id);
+                }}
+                className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700"
+              >
                 Add friend
               </button>
               <button className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700">

@@ -186,11 +186,6 @@ export default function Home() {
                           {imagesUploadError && (
                             <Alert color="failure">{imagesUploadError}</Alert>
                           )}
-                          {formData.images && (
-                            <div className="mt-3 flex">
-                              {console.log(formData.images)}
-                            </div>
-                          )}
                         </div>
                         <div className="show selected images name"></div>
                         <div className="show selected images">

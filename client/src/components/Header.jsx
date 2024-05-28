@@ -4,6 +4,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signOutSuccess } from "../redux/user/userSlice";
+import { CiSearch } from "react-icons/ci";
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -43,6 +44,9 @@ export default function Header() {
         >
           {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button> */}
+        <button className="border-2 border-emerald-700 rounded-full w-10 h-10 flex items-center justify-center hover:bg-emerald-700 hover:text-white">
+          <CiSearch />
+        </button>
         {currentUser ? (
           <Dropdown
             arrowIcon={false}

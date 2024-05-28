@@ -13,7 +13,6 @@ export const create = async (req, res, next) => {
     content: req.body.content,
     images: req.body.images,
   });
-  console.log(req.user);
   try {
     const savedPost = await post.save();
     res.status(201).json(savedPost);

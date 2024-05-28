@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
+import Friend from "../models/friend.model.js";
 
 export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -15,8 +16,12 @@ export const signup = async (req, res, next) => {
     email,
     password: hashPassword,
   });
+  const friend = new Friend({
+    userId: newUser._id,
+  });
   try {
     await newUser.save();
+    await friend.save();
     res.json("User created successfully");
   } catch (err) {
     next(err);
@@ -62,13 +67,9 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign(
-        { id: user._id, name: user.name, avatar: user.avatar },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "10h",
-        }
-      );
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "10h",
+      });
       const { password, ...rest } = user._doc;
       res
         .status(200)
@@ -85,7 +86,12 @@ export const google = async (req, res, next) => {
         password: hashedPassword,
         avatar: googlePhotoUrl,
       });
+      const friend = new Friend({
+        userId: newUser._id,
+      });
+
       await newUser.save();
+      await friend.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
         expiresIn: "10h",
       });

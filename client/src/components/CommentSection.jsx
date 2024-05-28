@@ -53,7 +53,7 @@ export default function CommentSection({ postId }) {
         <form onSubmit={handleSubmitComment} className="flex">
           <img
             src={currentUser.avatar}
-            className="w-10 h-10 rounded-full bg-gray-300 mr-3"
+            className="w-10 h-10 rounded-full bg-gray-300 mr-3 hidden lg:block"
             alt=""
           />
           <textarea

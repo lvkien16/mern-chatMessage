@@ -45,7 +45,7 @@ export default function SignIn() {
   return (
     <>
       <h2 className="w-full text-center bg-emerald-700 text-white py-4 font-bold">
-        SIGN UP
+        SIGN IN
       </h2>
       <div className="mt-5 flex justify-between w-full container mx-auto">
         <div className="hidden md:flex mx-auto items-center font-bold text-emerald-700">

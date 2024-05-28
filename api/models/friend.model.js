@@ -6,9 +6,17 @@ const friendSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    requested: {
+      type: Array,
+      default: [],
+    },
     friends: {
       type: Array,
       default: [],
+    },
+    numberOfRequests: {
+      type: Number,
+      default: 0,
     },
     numberOfFriends: {
       type: Number,
@@ -18,6 +26,6 @@ const friendSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Friends = mongoose.model("Friends", friendSchema);
+const Friend = mongoose.model("Friends", friendSchema);
 
-export default Friends;
+export default Friend;
