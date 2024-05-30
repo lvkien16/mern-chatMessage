@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Messages.css */
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .message {
+    max-width: 60%;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+  }
+  
+  .message-sent {
+    align-self: flex-end;
+    background-color: #dcf8c6; /* Màu nền cho tin nhắn gửi đi */
+  }
+  
+  .message-received {
+    align-self: flex-start;
+    background-color: #ffffff; /* Màu nền cho tin nhắn nhận được */
+    border: 1px solid #ddd;
+  }
+  

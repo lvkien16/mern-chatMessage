@@ -38,10 +38,13 @@ export default function ListFriends({ friend }) {
             <span>Friend</span>
             <IoCheckmark className="text-xl" />
           </button>
-          <button className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent">
+          <Link
+            to={`/messages/${user._id}`}
+            className="flex items-center gap-1 font-semibold border-2 border-emerald-700 rounded bg-emerald-700 text-white hover:text-emerald-700 hover:bg-transparent"
+          >
             <span>Message</span>
             <BiMessageRounded className="text-xl" />
-          </button>
+          </Link>
         </div>
       </div>
     </>

@@ -21,6 +21,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/friends" element={<Friends />} />
+          <Route path="/messages/:userId" element={<Messages />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/post/:postId" element={<Post />} />
