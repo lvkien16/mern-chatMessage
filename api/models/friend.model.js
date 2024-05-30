@@ -10,6 +10,10 @@ const friendSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    requestSend: {
+      type: Array,
+      default: [],
+    },
     friends: {
       type: Array,
       default: [],
@@ -19,6 +23,10 @@ const friendSchema = new mongoose.Schema(
       default: 0,
     },
     numberOfFriends: {
+      type: Number,
+      default: 0,
+    },
+    numberOfRequestsSent: {
       type: Number,
       default: 0,
     },

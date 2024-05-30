@@ -37,14 +37,23 @@ export const getMessages = async (req, res, next) => {
   }
 };
 
-// Get all users that the current user has sent messages to
+// Get all users that the current user has sent messages to or received messages from
 export const getConversations = async (req, res, next) => {
   try {
-    const conversations = await Message.distinct("userIdReceive", {
-      userIdSend: req.user.id,
-    });
-
-    res.json(conversations);
+    const userId = req.user.id;
+    const messages = await Message.find({
+      $or: [{ userIdSend: userId }, { userIdReceive: userId }],
+    }).sort({ createdAt: -1 });
+    const users = messages.reduce((acc, message) => {
+      if (message.userIdSend !== userId) {
+        acc[message.userIdSend] = message.userIdSend;
+      }
+      if (message.userIdReceive !== userId) {
+        acc[message.userIdReceive] = message.userIdReceive;
+      }
+      return acc;
+    }, {});
+    res.json(Object.keys(users));
   } catch (error) {
     next(error);
   }

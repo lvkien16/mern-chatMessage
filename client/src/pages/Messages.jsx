@@ -8,6 +8,11 @@ export default function Messages() {
   const { userId } = useParams();
   const { currentUser } = useSelector((state) => state.user);
   const [conversations, setConversations] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+
+  const refreshFriendRequests = () => {
+    setRefresh((prevRefresh) => !prevRefresh);
+  };
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -23,7 +28,7 @@ export default function Messages() {
       }
     };
     fetchConversations();
-  }, [userId]);
+  }, [userId, refresh]);
 
   return (
     <>
@@ -43,7 +48,11 @@ export default function Messages() {
                   </h3>
                 )}
                 {conversations.map((conversation) => (
-                  <ListConversations key={conversation} id={conversation} />
+                  <ListConversations
+                    key={conversation}
+                    id={conversation}
+                    refresh={refresh}
+                  />
                 ))}
               </div>
             }
@@ -51,7 +60,10 @@ export default function Messages() {
           <div className="md:w-2/3 px-2">
             <div className="content">
               {userId ? (
-                <MessageDetail userId={userId} />
+                <MessageDetail
+                  userId={userId}
+                  refreshFriendRequests={refreshFriendRequests}
+                />
               ) : (
                 <h3 className="text-center font-semibold mt-5">
                   Select a message

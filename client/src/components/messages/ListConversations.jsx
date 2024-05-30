@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function ListConversations({ id }) {
+export default function ListConversations({ id, refresh }) {
   const [user, setUser] = useState({});
   const location = useLocation();
   const parts = location.pathname.split("/");
@@ -19,7 +19,7 @@ export default function ListConversations({ id }) {
       }
     };
     fetchGetUser();
-  }, [id]);
+  }, [id, refresh]);
 
   return (
     <div>
