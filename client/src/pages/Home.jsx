@@ -112,7 +112,7 @@ export default function Home() {
     <>
       <div className="container mx-auto px-4">
         <div className="md:flex justify-between">
-          <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen">
+          <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen-60px">
             <div>
               <p className="text-center">
                 <span className="font-bold">{currentUser.name}</span> How are
@@ -232,7 +232,7 @@ export default function Home() {
               </Modal.Body>
             </Modal>
           </div>
-          <div className="md:border-x-2 md:w-2/3 px-2 pt-5"></div>
+          <div className="md:border-x-2 md:w-2/3 px-2 pt-5 md:h-screen-60px overflow-y-auto"></div>
         </div>
       </div>
     </>

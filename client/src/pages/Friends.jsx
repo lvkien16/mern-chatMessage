@@ -43,7 +43,7 @@ export default function Friends() {
 
   return (
     <>
-      <div className="container mx-auto px-4 min-h-screen">
+      <div className="container mx-auto px-4">
         <div className={`md:hidden flex gap-3 my-5 }`}>
           <button
             onClick={handleFriendButton}
@@ -66,38 +66,45 @@ export default function Friends() {
         </div>
         <div className="md:flex justify-between">
           <div
-            className={`md:w-1/2 px-2 bg-gray-200 min-h-screen ${
-              friendButton ? "" : "hidden md:block"
-            } `}
+            className={`md:w-1/3 px-2 bg-gray-300 
+             ${friendButton ? "" : "hidden md:block"} `}
           >
-            <h3 className="title text-center text-xl border-b-2 border-emerald-700 py-2 mb-5 font-semibold">
-              Friends
-            </h3>
-            <div className="">
+            <div className="title py-3 border-b">
+              <h3 className="text-xl font-semibold h-12 flex items-center justify-center">
+                Friends
+              </h3>
+            </div>
+            <div className="md:h-screen-60px-72px overflow-y-auto">
               {listFriends.length === 0 ? (
                 <h5 className="text-center font-semibold">
                   No have friends yet.
                 </h5>
               ) : (
                 listFriends.map((friend, index) => (
-                  <ListFriends key={index} friend={friend} />
+                  <>
+                    <ListFriends key={index} friend={friend} />
+                  </>
                 ))
               )}
             </div>
           </div>
           <div
-            className={`md:w-1/2 px-2  ${
+            className={`md:w-2/3 px-2 md:border-x ${
               requestButton ? "" : "hidden md:block"
             }`}
           >
-            <h3 className="title text-center text-xl border-b-2 border-emerald-700 py-2 mb-5 font-semibold">
-              Friend requests
-            </h3>
-            <div className="">
+            <div className="title py-3 border-b">
+              <h3 className="text-xl font-semibold h-12 flex items-center justify-center">
+                Friend requests
+              </h3>
+            </div>
+            <div className="md:h-screen-60px-72px overflow-y-auto">
               {friendRequests.length === 0 ? (
-                <h5 className="font-semibold text-center">
-                  No have friend requests yet.
-                </h5>
+                <>
+                  <h5 className="font-semibold text-center">
+                    No have friend requests yet.
+                  </h5>
+                </>
               ) : (
                 friendRequests.map((friend, index) => (
                   <FriendRequests

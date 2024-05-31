@@ -112,7 +112,7 @@ export default function OtherProfile({
     <>
       <div className="container mx-auto px-4">
         <div className="md:flex justify-between">
-          <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen">
+          <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen-60px overflow-y-auto">
             <div className="flex gap-3 items-center justify-center">
               <img
                 src={otherUser.avatar}
@@ -161,7 +161,7 @@ export default function OtherProfile({
               </Link>
             </div>
           </div>
-          <div className="md:border-x-2 md:w-2/3 px-2 pt-5">
+          <div className="md:border-x-2 md:w-2/3 px-2 pt-5 md:h-screen-60px overflow-y-auto">
             <div className="">
               {posts &&
                 !postId &&

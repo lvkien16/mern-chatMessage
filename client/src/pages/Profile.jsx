@@ -166,7 +166,7 @@ export default function Profile() {
       {currentUser._id === userId && !otherUser && (
         <div className="container mx-auto px-4">
           <div className="md:flex justify-between">
-            <div className="bg-gray-300 px-2 md:w-1/3 pt-5">
+            <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen-60px overflow-y-auto">
               <div className="flex gap-3 items-center justify-center">
                 <img
                   src={currentUser.avatar}
@@ -189,7 +189,7 @@ export default function Profile() {
               </div>
               <hr className="hidden md:block border-emerald-700" />
             </div>
-            <div className="md:border-x-2 md:w-2/3 px-2 pt-5">
+            <div className="md:border-x-2 md:w-2/3 px-2 pt-5 md:h-screen-60px overflow-y-auto">
               {/* Post list */}
               <div className="">
                 {posts &&
