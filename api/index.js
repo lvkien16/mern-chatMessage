@@ -7,6 +7,7 @@ import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import friendRoutes from "./routes/friend.route.js";
 import messageRoutes from "./routes/message.route.js";
+import notificationRoutes from "./routes/notification.route.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/friend", friendRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/notification", notificationRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

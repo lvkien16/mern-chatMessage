@@ -1,20 +1,32 @@
 import Message from "../models/message.model.js";
 import { errorHandler } from "../utils/error.js";
+import { sendNotification } from "./notification.controller.js";
 
 export const sendMessage = async (req, res, next) => {
-  if (!req.user) {
+  const { userId } = req.params;
+  const { content } = req.body;
+
+  if (!req.user || !userId || !content) {
     return next(errorHandler(400, "Invalid data"));
   }
-  if (!req.body.content) {
-    return next(errorHandler(400, "Content is required"));
-  }
+
   const message = new Message({
     userIdSend: req.user.id,
-    userIdReceive: req.params.userId,
-    content: req.body.content,
+    userIdReceive: userId,
+    content,
   });
+
   try {
     const savedMessage = await message.save();
+
+    await sendNotification({
+      userId,
+      type: "message",
+      content: "You have a new message!",
+      link: `/messages/${req.user.id}`,
+      from: req.user.id,
+    });
+
     res.status(201).json(savedMessage);
   } catch (error) {
     next(error);
