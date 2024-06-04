@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
 import Post from "./pages/Post";
+import Search from "./pages/Search";
 
 export default function App() {
   const path = window.location.pathname;
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/post/:postId" element={<Post />} />
+          <Route path="/search/:search" element={<Search />} />
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />

@@ -1,16 +1,20 @@
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signOutSuccess } from "../redux/user/userSlice";
 import { CiSearch } from "react-icons/ci";
+import { useState } from "react";
 
 export default function Header() {
   const path = useLocation().pathname;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+  const [search, setSearch] = useState("");
+
   const handleSignout = async () => {
     try {
       const res = await fetch("/api/user/sign-out", {
@@ -25,6 +29,12 @@ export default function Header() {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    navigate(`/search/${search}`);
+    setSearch("");
   };
   return (
     <Navbar className="bg-gray-200">
@@ -44,10 +54,13 @@ export default function Header() {
         >
           {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button> */}
-        <form className="flex md:pr-10 items-center">
+        <form onSubmit={handleSearch} className="flex md:pr-10 items-center">
           <input
             type="text"
             name="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            required
             className="w-40 md:w-52 rounded-full rounded-r-none py-1 h-8"
             placeholder={`Search`}
           />
