@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
+import ShowAvatar from "../components/profile/ShowAvatar";
 
 export default function Profile() {
   const location = useLocation();
@@ -332,17 +333,11 @@ export default function Profile() {
           </Modal>
 
           {/* show avatar */}
-          <Modal
-            show={showAvatar}
-            onClose={() => setShowAvatar(false)}
-            popup
-            size="md"
-          >
-            <Modal.Header />
-            <Modal.Body>
-              <img src={currentUser.avatar} alt="Avatar" className="w-full" />
-            </Modal.Body>
-          </Modal>
+          <ShowAvatar
+            avatar={currentUser.avatar}
+            showAvatar={showAvatar}
+            setShowAvatar={setShowAvatar}
+          />
 
           {/* show more images */}
           <Modal

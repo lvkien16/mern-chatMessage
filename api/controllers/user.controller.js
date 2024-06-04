@@ -21,3 +21,17 @@ export const signout = async (req, res, next) => {
     next(error);
   }
 };
+
+export const changeAvatar = async (req, res, next) => {
+  try {
+    const updateUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { avatar: req.body.avatar },
+      { new: true }
+    );
+    const { password, ...rest } = updateUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
