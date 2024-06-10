@@ -67,7 +67,7 @@ export default function Messages() {
                   refreshFriendRequests={refreshFriendRequests}
                 />
               ) : (
-                <h3 className="text-center font-semibold mt-5">
+                <h3 className="text-center font-semibold mt-5 hidden md:block">
                   Select a message
                 </h3>
               )}

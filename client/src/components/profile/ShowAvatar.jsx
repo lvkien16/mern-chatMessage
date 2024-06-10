@@ -76,6 +76,7 @@ export default function ShowAvatar({ avatar, showAvatar, setShowAvatar }) {
       setFormData({});
       refreshFriendRequests();
       dishpatch(updateSuccess(data));
+      refreshFriendRequests();
     } catch (error) {
       console.error("Error saving avatar:", error);
       dishpatch(updateFailure("Error saving avatar"));

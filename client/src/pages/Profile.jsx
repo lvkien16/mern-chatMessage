@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Modal, Dropdown } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -13,6 +13,12 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
 import ShowAvatar from "../components/profile/ShowAvatar";
+import { MdOutlineModeEdit } from "react-icons/md";
+import {
+  updateStart,
+  updateSuccess,
+  updateFailure,
+} from "../redux/user/userSlice";
 
 export default function Profile() {
   const location = useLocation();
@@ -23,6 +29,8 @@ export default function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   const [posts, setPosts] = useState([]);
   const [showPostImage, setShowPostImage] = useState(false);
+  const [showInputChageName, setShowInputChageName] = useState(false);
+  const [changeName, setChangeName] = useState("");
   const [currentImageFocus, setCurrentImageFocus] = useState({});
   const [showMoreImages, setShowMoreImages] = useState(false);
   const [imagesForModal, setImagesForModal] = useState([]);
@@ -32,6 +40,7 @@ export default function Profile() {
   const [postIdToDelete, setPostIdToDelete] = useState("");
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
+  const dishpatch = useDispatch();
 
   const refreshFriendRequests = () => {
     setRefresh((prevRefresh) => !prevRefresh);
@@ -162,6 +171,34 @@ export default function Profile() {
     }
   };
 
+  const handleEditUserName = async (e) => {
+    e.preventDefault();
+    console.log(changeName);
+    try {
+      dishpatch(updateStart());
+      const res = await fetch(`/api/user/change-user-name`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userName: changeName }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        dishpatch(updateFailure(data));
+        return;
+      }
+      dishpatch(updateSuccess(data));
+      setShowInputChageName(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const showModalEditName = () => {
+    setShowInputChageName(true);
+  };
+
   return (
     <>
       {currentUser._id === userId && !otherUser && (
@@ -175,7 +212,15 @@ export default function Profile() {
                   className="rounded-full h-14 w-14 bg-gray-200 hover:cursor-pointer"
                   alt=""
                 />
-                <h2 className="text-2xl mt-2 font-bold">{currentUser.name}</h2>
+                <h2 className="text-2xl mt-2 font-bold flex items-center gap-2">
+                  {currentUser.name}
+                  <MdOutlineModeEdit
+                    className="cursor-pointer"
+                    onClick={() => {
+                      showModalEditName();
+                    }}
+                  />
+                </h2>
               </div>
               <div className="other information my-3 flex justify-center">
                 <div className="my-5 text-center w-2/3">
@@ -428,6 +473,35 @@ export default function Profile() {
                   No
                 </button>
               </div>
+            </Modal.Body>
+          </Modal>
+
+          {/* show input change name */}
+          <Modal
+            show={showInputChageName}
+            onClose={() => setShowInputChageName(false)}
+            popup
+            size="md"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <form onSubmit={handleEditUserName}>
+                <textarea
+                  type="text"
+                  className="w-full border-2 rounded p-2 resize-none"
+                  rows={1}
+                  value={changeName}
+                  name="userName"
+                  onChange={(e) => setChangeName(e.target.value)}
+                  placeholder="Enter your new name"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-700 text-white rounded py-2 mt-2 hover:bg-transparent hover:text-emerald-700 border-2 border-emerald-700"
+                >
+                  Change
+                </button>
+              </form>
             </Modal.Body>
           </Modal>
         </div>
