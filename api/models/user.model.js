@@ -30,6 +30,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       required: false,
     },
+    bio: {
+      type: String,
+      required: false,
+    },
+    hometown: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );

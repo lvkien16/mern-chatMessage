@@ -21,6 +21,9 @@ import {
 } from "../redux/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { IoLocation } from "react-icons/io5";
+import { FaBirthdayCake } from "react-icons/fa";
+import { RiCharacterRecognitionFill } from "react-icons/ri";
 
 export default function Profile() {
   const location = useLocation();
@@ -33,6 +36,7 @@ export default function Profile() {
   const [showPostImage, setShowPostImage] = useState(false);
   const [showInputChageName, setShowInputChageName] = useState(false);
   const [changeName, setChangeName] = useState("");
+  const [showEditProfile, setShowEditProfile] = useState(false);
   const [currentImageFocus, setCurrentImageFocus] = useState({});
   const [showMoreImages, setShowMoreImages] = useState(false);
   const [imagesForModal, setImagesForModal] = useState([]);
@@ -43,6 +47,7 @@ export default function Profile() {
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
   const dishpatch = useDispatch();
+  const currentDate = new Date().toISOString().split("T")[0];
 
   const refreshFriendRequests = () => {
     setRefresh((prevRefresh) => !prevRefresh);
@@ -205,6 +210,36 @@ export default function Profile() {
     setShowInputChageName(true);
   };
 
+  const handleSaveEditProfile = async (e) => {
+    e.preventDefault();
+    try {
+      dishpatch(updateStart());
+      const res = await fetch(`/api/user/edit-profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bio: e.target.bio.value,
+          birthday: e.target.birthday.value,
+          hometown: e.target.hometown.value,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        dishpatch(updateFailure(data));
+        return;
+      }
+      dishpatch(updateSuccess(data));
+      setShowEditProfile(false);
+      refreshFriendRequests();
+      const notify = () => toast.success("Edit profile successfully");
+      notify();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {currentUser._id === userId && !otherUser && (
@@ -228,15 +263,32 @@ export default function Profile() {
                   />
                 </h2>
               </div>
+              <div className="text-center mt-3">
+                {currentUser.bio && <p>{currentUser.bio}</p>}
+              </div>
               <div className="other information my-3 flex justify-center">
                 <div className="my-5 text-center w-2/3">
-                  <p>From Dien Bien city</p>
-                  <p>Birthday 16/05/2004</p>
+                  {currentUser.hometown && (
+                    <p className="flex justify-center items-center gap-1">
+                      <IoLocation />
+                      {currentUser.hometown}
+                    </p>
+                  )}
+                  {currentUser.birthday && (
+                    <p className="flex justify-center items-center gap-1">
+                      <FaBirthdayCake />
+                      {currentUser.birthday.toString().split("T")[0]}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex justify-center mb-5">
-                <button className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700">
-                  Edit your profile
+                <button
+                  type="button"
+                  onClick={() => setShowEditProfile(true)}
+                  className="border-2 border-emerald-700 bg-emerald-700 text-white px-2 mb-3 hover:bg-transparent hover:text-emerald-700"
+                >
+                  Edit other information
                 </button>
               </div>
               <hr className="hidden md:block border-emerald-700" />
@@ -508,6 +560,80 @@ export default function Profile() {
                   Change
                 </button>
               </form>
+            </Modal.Body>
+          </Modal>
+
+          {/* show edit profile form */}
+          <Modal
+            show={showEditProfile}
+            onClose={() => setShowEditProfile(false)}
+            popup
+            size="md"
+          >
+            <Modal.Header>
+              <p className="text-xl font-bold text-emerald-700">Edit profile</p>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="text-center">
+                <div>
+                  <form onSubmit={handleSaveEditProfile}>
+                    <div className="flex items-center gap-2">
+                      <label
+                        htmlFor="bio"
+                        className="
+                      flex items-center gap-1"
+                      >
+                        <RiCharacterRecognitionFill /> Bio
+                      </label>
+                      <textarea
+                        name="bio"
+                        id="bio"
+                        rows={1}
+                        className="resize-none rounded w-full"
+                      ></textarea>
+                    </div>
+                    <div className="flex items-center gap-2 mt-3">
+                      <label
+                        htmlFor="birthday"
+                        className="flex gap-1 items-center"
+                      >
+                        <FaBirthdayCake />
+                        Birthday
+                      </label>
+                      <input
+                        id="birthday"
+                        type="date"
+                        min="1900-01-01"
+                        name="birthday"
+                        max={currentDate}
+                        className="rounded w-full"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 mt-3">
+                      <label
+                        htmlFor="hometown"
+                        className="
+                      flex items-center gap-1"
+                      >
+                        <IoLocation /> Hometown
+                      </label>
+                      <textarea
+                        name="hometown"
+                        id="hometown"
+                        rows={1}
+                        className="resize-none rounded w-full"
+                      ></textarea>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="bg-emerald-700 w-full text-white rounded py-2 mt-2"
+                    >
+                      Save
+                    </button>
+                  </form>
+                </div>
+              </div>
             </Modal.Body>
           </Modal>
           <ToastContainer />

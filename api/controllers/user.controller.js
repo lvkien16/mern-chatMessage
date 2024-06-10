@@ -49,3 +49,21 @@ export const changeUserName = async (req, res, next) => {
     next(error);
   }
 };
+
+export const editProfile = async (req, res, next) => {
+  try {
+    const updateUser = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        hometown: req.body.hometown,
+        birthday: req.body.birthday,
+        bio: req.body.bio,
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updateUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
