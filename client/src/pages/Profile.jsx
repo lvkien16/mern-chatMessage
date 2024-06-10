@@ -46,8 +46,11 @@ export default function Profile() {
   const [postIdToDelete, setPostIdToDelete] = useState("");
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
-  const dishpatch = useDispatch();
+  const dispatch = useDispatch();
   const currentDate = new Date().toISOString().split("T")[0];
+  const [hometown, setHometown] = useState(currentUser.hometown || "");
+  const [birthday, setBirthday] = useState(currentUser.birthday || "");
+  const [bio, setBio] = useState(currentUser.bio || "");
 
   const refreshFriendRequests = () => {
     setRefresh((prevRefresh) => !prevRefresh);
@@ -182,7 +185,7 @@ export default function Profile() {
     e.preventDefault();
     console.log(changeName);
     try {
-      dishpatch(updateStart());
+      dispatch(updateStart());
       const res = await fetch(`/api/user/change-user-name`, {
         method: "PUT",
         headers: {
@@ -192,10 +195,10 @@ export default function Profile() {
       });
       const data = await res.json();
       if (!res.ok) {
-        dishpatch(updateFailure(data));
+        dispatch(updateFailure(data));
         return;
       }
-      dishpatch(updateSuccess(data));
+      dispatch(updateSuccess(data));
       setShowInputChageName(false);
       setChangeName("");
       refreshFriendRequests();
@@ -213,30 +216,30 @@ export default function Profile() {
   const handleSaveEditProfile = async (e) => {
     e.preventDefault();
     try {
-      dishpatch(updateStart());
+      dispatch(updateStart());
       const res = await fetch(`/api/user/edit-profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          bio: e.target.bio.value,
-          birthday: e.target.birthday.value,
-          hometown: e.target.hometown.value,
+          bio: bio,
+          birthday: birthday,
+          hometown: hometown,
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        dishpatch(updateFailure(data));
+        dispatch(updateFailure(data));
         return;
       }
-      dishpatch(updateSuccess(data));
+      dispatch(updateSuccess(data));
       setShowEditProfile(false);
       refreshFriendRequests();
-      const notify = () => toast.success("Edit profile successfully");
-      notify();
+      toast.success("Edit profile successfully");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to edit profile");
     }
   };
 
@@ -552,6 +555,7 @@ export default function Profile() {
                   name="userName"
                   onChange={(e) => setChangeName(e.target.value)}
                   placeholder="Enter your new name"
+                  required
                 />
                 <button
                   type="submit"
@@ -566,7 +570,12 @@ export default function Profile() {
           {/* show edit profile form */}
           <Modal
             show={showEditProfile}
-            onClose={() => setShowEditProfile(false)}
+            onClose={() => {
+              setShowEditProfile(false);
+              setHometown(currentUser.hometown || "");
+              setBirthday(currentUser.birthday || "");
+              setBio(currentUser.bio || "");
+            }}
             popup
             size="md"
           >
@@ -587,6 +596,10 @@ export default function Profile() {
                       </label>
                       <textarea
                         name="bio"
+                        value={bio}
+                        onChange={(e) => {
+                          setBio(e.target.value);
+                        }}
                         id="bio"
                         rows={1}
                         className="resize-none rounded w-full"
@@ -597,13 +610,14 @@ export default function Profile() {
                         htmlFor="birthday"
                         className="flex gap-1 items-center"
                       >
-                        <FaBirthdayCake />
-                        Birthday
+                        <FaBirthdayCake /> Birthday
                       </label>
                       <input
                         id="birthday"
                         type="date"
                         min="1900-01-01"
+                        value={birthday}
+                        onChange={(e) => setBirthday(e.target.value)}
                         name="birthday"
                         max={currentDate}
                         className="rounded w-full"
@@ -619,10 +633,14 @@ export default function Profile() {
                       </label>
                       <textarea
                         name="hometown"
+                        value={hometown}
+                        onChange={(e) => {
+                          setHometown(e.target.value);
+                        }}
                         id="hometown"
                         rows={1}
                         className="resize-none rounded w-full"
-                      ></textarea>
+                      />
                     </div>
 
                     <button
