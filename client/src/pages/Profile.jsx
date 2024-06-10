@@ -19,6 +19,8 @@ import {
   updateSuccess,
   updateFailure,
 } from "../redux/user/userSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Profile() {
   const location = useLocation();
@@ -190,6 +192,10 @@ export default function Profile() {
       }
       dishpatch(updateSuccess(data));
       setShowInputChageName(false);
+      setChangeName("");
+      refreshFriendRequests();
+      const notify = () => toast.success("Change name successfully");
+      notify();
     } catch (error) {
       console.log(error);
     }
@@ -504,6 +510,7 @@ export default function Profile() {
               </form>
             </Modal.Body>
           </Modal>
+          <ToastContainer />
         </div>
       )}
       {otherUser && (

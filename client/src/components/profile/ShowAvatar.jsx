@@ -13,6 +13,8 @@ import {
   updateFailure,
 } from "../../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ShowAvatar({ avatar, showAvatar, setShowAvatar }) {
   const [formData, setFormData] = useState({});
@@ -77,6 +79,7 @@ export default function ShowAvatar({ avatar, showAvatar, setShowAvatar }) {
       refreshFriendRequests();
       dishpatch(updateSuccess(data));
       refreshFriendRequests();
+      toast.success("Avatar updated successfully");
     } catch (error) {
       console.error("Error saving avatar:", error);
       dishpatch(updateFailure("Error saving avatar"));
