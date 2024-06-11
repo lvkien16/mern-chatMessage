@@ -52,7 +52,7 @@ export default function Profile() {
   const [birthday, setBirthday] = useState(currentUser.birthday || "");
   const [bio, setBio] = useState(currentUser.bio || "");
 
-  const refreshFriendRequests = () => {
+  const refreshPage = () => {
     setRefresh((prevRefresh) => !prevRefresh);
   };
 
@@ -131,7 +131,7 @@ export default function Profile() {
           )
         );
       }
-      refreshFriendRequests();
+      refreshPage();
     } catch (error) {
       console.log(error);
     }
@@ -201,7 +201,7 @@ export default function Profile() {
       dispatch(updateSuccess(data));
       setShowInputChageName(false);
       setChangeName("");
-      refreshFriendRequests();
+      refreshPage();
       const notify = () => toast.success("Change name successfully");
       notify();
     } catch (error) {
@@ -235,7 +235,7 @@ export default function Profile() {
       }
       dispatch(updateSuccess(data));
       setShowEditProfile(false);
-      refreshFriendRequests();
+      refreshPage();
       toast.success("Edit profile successfully");
     } catch (error) {
       console.error(error);
@@ -678,7 +678,7 @@ export default function Profile() {
           setShowPostImage={setShowPostImage}
           setShowMoreImages={setShowMoreImages}
           handleLikePost={handleLikePost}
-          refreshFriendRequests={refreshFriendRequests}
+          refreshPage={refreshPage}
         />
       )}
     </>

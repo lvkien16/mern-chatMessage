@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Dropdown } from "flowbite-react";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { toast } from "react-toastify";
 
-export default function AllNotifications({ notification }) {
+export default function AllNotifications({ notification, refreshPage }) {
   const [user, setUser] = useState({});
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -22,6 +26,23 @@ export default function AllNotifications({ notification }) {
       await fetch(`/api/notification/read/${notification._id}`, {
         method: "PUT",
       });
+      refreshPage();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`/api/notification/delete/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return;
+      }
+      refreshPage();
+      toast.success("Notification deleted successfully!");
     } catch (error) {
       console.log(error);
     }
@@ -30,14 +51,14 @@ export default function AllNotifications({ notification }) {
     <div
       className={`${
         notification.read === false ? "bg-gray-400" : ""
-      } rounded-lg px-2 border-2`}
-      onClick={handleRead}
+      } rounded-lg px-2 border-2 flex justify-between items-center gap-2`}
     >
       <Link
+        onClick={handleRead}
         as="div"
         to={notification.link}
         key={notification._id}
-        className="flex items-center gap-3 py-3 border-b"
+        className="flex items-center gap-3 py-3 border-b w-full"
       >
         <img
           src={user.avatar}
@@ -51,6 +72,18 @@ export default function AllNotifications({ notification }) {
           </p>
         </div>
       </Link>
+      <div>
+        <Dropdown arrowIcon={false} inline label={<BsThreeDotsVertical />}>
+          <Dropdown.Item onClick={() => handleDelete(notification._id)}>
+            <span>Delete</span>
+          </Dropdown.Item>
+          {notification.read === false && (
+            <Dropdown.Item onClick={handleRead}>
+              <span>Mark as read</span>
+            </Dropdown.Item>
+          )}
+        </Dropdown>
+      </div>
     </div>
   );
 }

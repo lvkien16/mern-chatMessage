@@ -42,3 +42,17 @@ export const readNotification = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteNotification = async (req, res, next) => {
+  try {
+    const notification = await Notification.findByIdAndDelete(
+      req.params.notificationId
+    );
+    if (!notification) {
+      return next(errorHandler(404, "Notification not found"));
+    }
+    res.status(200).json("Notification deleted");
+  } catch (error) {
+    next(error);
+  }
+};
