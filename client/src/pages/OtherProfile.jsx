@@ -5,10 +5,11 @@ import {
   FaShareAlt,
   FaCaretRight,
   FaPlus,
+  FaBirthdayCake,
 } from "react-icons/fa";
 import { Dropdown, Modal } from "flowbite-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { IoCheckmark } from "react-icons/io5";
+import { IoCheckmark, IoLocation } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 export default function OtherProfile({
@@ -110,7 +111,7 @@ export default function OtherProfile({
   };
   return (
     <>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="md:flex justify-between">
           <div className="bg-gray-300 px-2 md:w-1/3 pt-5 md:h-screen-60px overflow-y-auto">
             <div className="flex gap-3 items-center justify-center">
@@ -122,10 +123,23 @@ export default function OtherProfile({
               />
               <h2 className="text-2xl mt-2 font-bold">{otherUser.name}</h2>
             </div>
+            <div className="text-center mt-3">
+              {otherUser.bio && <p>{otherUser.bio}</p>}
+            </div>
             <div className="other information my-3 flex justify-center">
               <div className="my-5 text-center w-2/3">
-                <p>From Dien Bien city</p>
-                <p>Birthday 16/05/2004</p>
+                {otherUser.hometown && (
+                  <p className="flex justify-center items-center gap-1">
+                    <IoLocation />
+                    {otherUser.hometown}
+                  </p>
+                )}
+                {otherUser.birthday && (
+                  <p className="flex justify-center items-center gap-1">
+                    <FaBirthdayCake />
+                    {otherUser.birthday.toString().split("T")[0]}
+                  </p>
+                )}
               </div>
             </div>
             <hr className="hidden md:block border-emerald-700" />

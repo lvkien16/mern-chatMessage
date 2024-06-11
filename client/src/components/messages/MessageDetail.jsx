@@ -110,7 +110,7 @@ export default function MessageDetail({ userId, refreshFriendRequests }) {
                   message.userIdSend === currentUser._id
                     ? "right-message-content"
                     : "left-message-content"
-                }`}
+                } px-2`}
               >
                 <div
                   key={message._id}

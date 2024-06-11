@@ -42,7 +42,7 @@ export default function Notifications() {
 
   return (
     <>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="md:flex justify-center">
           <div className={`bg-gray-300 px-2 md:w-1/3`}>
             <div className="title py-3 border-b">

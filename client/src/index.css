@@ -27,4 +27,11 @@
     background-color: #ffffff; /* Màu nền cho tin nhắn nhận được */
     border: 1px solid #ddd;
   }
+
+  .text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
   
