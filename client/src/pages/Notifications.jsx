@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import AllNotifications from "./../components/notifications/AllNotifications";
+import NotificationsUnread from "../components/notifications/NotificationsUnread";
 
 export default function Notifications() {
   const { currentUser } = useSelector((state) => state.user);
   const [notifications, setNotifications] = useState([]);
-  const [user, setUser] = useState({});
+  const [unreadNotifications, setUnreadNotifications] = useState([]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -21,6 +22,11 @@ export default function Notifications() {
 
         const data = await res.json();
         setNotifications(data);
+        data.map((notification) => {
+          if (notification.read === false) {
+            setUnreadNotifications([...unreadNotifications, notification]);
+          }
+        });
         console.log(data);
       } catch (error) {
         console.log(error);
@@ -41,9 +47,20 @@ export default function Notifications() {
               </h3>
             </div>
             <div className="pt-3  overflow-y-auto">
-              <h3 className="text-center font-semibold mt-5">
-                No notifications
-              </h3>
+              {unreadNotifications.length === 0 ? (
+                <h3 className="text-center font-semibold mt-5">
+                  No unread notifications
+                </h3>
+              ) : (
+                <div>
+                  {unreadNotifications.map((notification) => (
+                    <NotificationsUnread
+                      key={notification._id}
+                      notification={notification}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className="md:w-2/3 h-screen-60px px-2 border-x">

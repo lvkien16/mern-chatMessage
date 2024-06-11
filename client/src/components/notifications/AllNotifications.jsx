@@ -29,7 +29,7 @@ export default function AllNotifications({ notification }) {
   return (
     <div
       className={`${
-        notification.read === false ? "bg-gray-200" : ""
+        notification.read === false ? "bg-gray-400" : ""
       } rounded-lg px-2 border-2`}
       onClick={handleRead}
     >
@@ -45,8 +45,10 @@ export default function AllNotifications({ notification }) {
           alt=""
         />
         <div>
-          <span className="font-semibold">{notification.from.name}</span>
           <p>{notification.content}</p>
+          <p className="text-xs text-gray-500">
+            {new Date(notification.createdAt).toLocaleString()}
+          </p>
         </div>
       </Link>
     </div>
