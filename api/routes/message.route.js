@@ -1,6 +1,7 @@
 import express from "express";
 import { verifyToken } from "../utils/verifyUser.js";
 import {
+  deleteConversation,
   getConversations,
   getMessages,
   sendMessage,
@@ -11,5 +12,6 @@ const router = express.Router();
 router.post("/send/:userId", verifyToken, sendMessage);
 router.get("/getMessage/:userId1/:userId2", verifyToken, getMessages);
 router.get("/getConversations", verifyToken, getConversations);
+router.delete("/delete/:userId", verifyToken, deleteConversation);
 
 export default router;

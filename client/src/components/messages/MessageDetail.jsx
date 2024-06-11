@@ -3,7 +3,7 @@ import { IoMdSend } from "react-icons/io";
 import { useSelector } from "react-redux";
 import moment from "moment";
 
-export default function MessageDetail({ userId, refreshFriendRequests }) {
+export default function MessageDetail({ userId, refeshPage, refresh }) {
   const { currentUser } = useSelector((state) => state.user);
   const elementRef = useRef(null);
   const [elementWidth, setElementWidth] = useState(0);
@@ -44,7 +44,7 @@ export default function MessageDetail({ userId, refreshFriendRequests }) {
     if (!res.ok) {
       return;
     }
-    refreshFriendRequests();
+    refeshPage();
   };
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function MessageDetail({ userId, refreshFriendRequests }) {
     };
 
     fetchMessages();
-  }, [userId1, userId]);
+  }, [userId1, userId, refresh]);
 
   useEffect(() => {
     const fetchUser = async () => {

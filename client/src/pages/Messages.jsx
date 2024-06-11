@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import MessageDetail from "../components/messages/MessageDetail";
 import ListConversations from "../components/messages/ListConversations";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Messages() {
   const { userId } = useParams();
@@ -10,7 +12,7 @@ export default function Messages() {
   const [conversations, setConversations] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
-  const refreshFriendRequests = () => {
+  const refeshPage = () => {
     setRefresh((prevRefresh) => !prevRefresh);
   };
 
@@ -47,7 +49,7 @@ export default function Messages() {
 
             <div className="pt-3 md:h-screen-60px-72px overflow-y-auto">
               {conversations.length === 0 && (
-                <h3 className="text-center font-semibold mt-5">No messages</h3>
+                <h3 className="text-center font-semibold mt-5">No conversations</h3>
               )}
               {conversations.map((conversation) => (
                 <ListConversations
@@ -55,6 +57,7 @@ export default function Messages() {
                   id={conversation}
                   refresh={refresh}
                   currentUser={currentUser}
+                  refeshPage={refeshPage}
                 />
               ))}
             </div>
@@ -64,7 +67,8 @@ export default function Messages() {
               {userId ? (
                 <MessageDetail
                   userId={userId}
-                  refreshFriendRequests={refreshFriendRequests}
+                  refresh={refresh}
+                  refeshPage={refeshPage}
                 />
               ) : (
                 <h3 className="text-center font-semibold mt-5 hidden md:block">
@@ -74,6 +78,7 @@ export default function Messages() {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );

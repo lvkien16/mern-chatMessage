@@ -70,3 +70,20 @@ export const getConversations = async (req, res, next) => {
     next(error);
   }
 };
+
+// Delete a conversation
+export const deleteConversation = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.user.id;
+    await Message.deleteMany({
+      $or: [
+        { userIdSend: currentUserId, userIdReceive: userId },
+        { userIdSend: userId, userIdReceive: currentUserId },
+      ],
+    });
+    res.json({ message: "Conversation deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
