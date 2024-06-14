@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:3000");
 
 export default function MessageDetail({ userId, refeshPage, refresh }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -26,7 +29,7 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    setMessage("");
+
     const res = await fetch(`/api/message/send/${userId}`, {
       method: "POST",
       headers: {
@@ -41,17 +44,31 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
 
     const data = await res.json();
     setMessages([...messages, data]);
+
+    setMessage(""); // Clear message input after sending
+
     if (!res.ok) {
       return;
     }
-    refeshPage();
   };
+
+  useEffect(() => {
+    // Listen for 'chat-message' event from server
+    socket.on("chat-message", (message) => {
+      setMessages([...messages, message]);
+    });
+
+    // Clean up socket event listener on unmount
+    return () => {
+      socket.off("chat-message");
+    };
+  }, [messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const res = await fetch(
-          `/api/message/getMessage/${userId1}/${userId}`,
+          `/api/message/getMessage/${currentUser._id}/${userId}`,
           {
             method: "GET",
             headers: {
@@ -68,9 +85,8 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
         console.error("Error fetching messages:", error);
       }
     };
-
     fetchMessages();
-  }, [userId1, userId, refresh]);
+  }, [userId, currentUser._id, refresh]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -113,7 +129,6 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
                 } px-2`}
               >
                 <div
-                  key={message._id}
                   className={`${
                     message.userIdSend === currentUser._id
                       ? "message-box ms-auto bg-emerald-700 p-3 rounded-lg w-2/3 my-3"

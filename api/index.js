@@ -10,6 +10,10 @@ import messageRoutes from "./routes/message.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import searchRoutes from "./routes/search.route.js";
 import cookieParser from "cookie-parser";
+import http from "http";
+import cors from "cors";
+import { Server } from "socket.io";
+import { onConnection } from "./socket/socket.js";
 
 dotenv.config();
 
@@ -23,11 +27,32 @@ mongoose
   });
 
 const app = express();
+const server = http.createServer(app);
 
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.listen(3000, () => {
+app.set("socketio", io);
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  onConnection(socket, io);
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
+
+server.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
 

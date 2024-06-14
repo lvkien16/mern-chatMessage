@@ -19,6 +19,10 @@ export const sendMessage = async (req, res, next) => {
   try {
     const savedMessage = await message.save();
 
+    // emit message to all clients via socket.io
+    const io = req.app.get("socketio");
+    io.emit("chat-message", savedMessage);
+
     await sendNotification({
       userId,
       type: "message",

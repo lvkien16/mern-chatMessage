@@ -81,9 +81,7 @@ export default function Friends() {
                 </h5>
               ) : (
                 listFriends.map((friend, index) => (
-                  <>
-                    <ListFriends key={index} friend={friend} />
-                  </>
+                  <ListFriends key={index} friend={friend} />
                 ))
               )}
             </div>

@@ -49,7 +49,9 @@ export default function Messages() {
 
             <div className="pt-3 md:h-screen-60px-72px overflow-y-auto">
               {conversations.length === 0 && (
-                <h3 className="text-center font-semibold mt-5">No conversations</h3>
+                <h3 className="text-center font-semibold mt-5">
+                  No conversations
+                </h3>
               )}
               {conversations.map((conversation) => (
                 <ListConversations
