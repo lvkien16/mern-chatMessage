@@ -15,11 +15,17 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
   const [user, setUser] = useState({});
   const userId1 = currentUser._id;
 
+  const bottomRef = useRef(null);
+
   const updateWidth = () => {
     if (elementRef.current) {
       setElementWidth(elementRef.current.offsetWidth);
     }
   };
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [message]);
 
   useEffect(() => {
     updateWidth();
@@ -43,22 +49,22 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
     });
 
     const data = await res.json();
-    setMessages([...messages, data]);
-
-    setMessage(""); // Clear message input after sending
 
     if (!res.ok) {
       return;
     }
+
+    setMessages([...messages, data]);
+
+    setMessage("");
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    // Listen for 'chat-message' event from server
     socket.on("chat-message", (message) => {
       setMessages([...messages, message]);
     });
 
-    // Clean up socket event listener on unmount
     return () => {
       socket.off("chat-message");
     };
@@ -127,6 +133,7 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
                     ? "right-message-content"
                     : "left-message-content"
                 } px-2`}
+                ref={bottomRef}
               >
                 <div
                   className={`${

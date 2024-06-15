@@ -2,7 +2,7 @@ import { FaPlus } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Modal, Alert } from "flowbite-react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiImageAddFill } from "react-icons/ri";
 import {
   getStorage,
@@ -13,6 +13,7 @@ import {
 import { app } from "../firebase";
 import { FaFileUpload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import PostForNewsFeed from "../components/home/PostForNewsFeed";
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
@@ -23,6 +24,7 @@ export default function Home() {
   const [imagesUploadProgress, setImagesUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+  const [postsForNewsFeeed, setPostsForNewsFeed] = useState([]);
 
   const navigate = useNavigate();
 
@@ -107,6 +109,22 @@ export default function Home() {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const fetchPostsForNewsFeed = async () => {
+      try {
+        const res = await fetch("/api/home/posts-for-news-feed");
+        const data = await res.json();
+        if (!res.ok) {
+          return;
+        }
+        setPostsForNewsFeed(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPostsForNewsFeed();
+  }, [currentUser.token]);
 
   return (
     <>
@@ -232,7 +250,11 @@ export default function Home() {
               </Modal.Body>
             </Modal>
           </div>
-          <div className="md:border-x-2 md:w-2/3 px-2 pt-5 md:h-screen-60px overflow-y-auto"></div>
+          <div className="md:border-x-2 md:w-2/3 px-2 pt-5 md:h-screen-60px overflow-y-auto">
+            {postsForNewsFeeed.map((post) => (
+              <PostForNewsFeed key={post._id} post={post} />
+            ))}
+          </div>
         </div>
       </div>
     </>

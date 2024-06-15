@@ -12,6 +12,7 @@ export const create = async (req, res, next) => {
     userId: req.user.id,
     content: req.body.content,
     images: req.body.images,
+    user: req.user.id,
   });
   try {
     const savedPost = await post.save();

@@ -9,6 +9,7 @@ import friendRoutes from "./routes/friend.route.js";
 import messageRoutes from "./routes/message.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import searchRoutes from "./routes/search.route.js";
+import homeRoutes from "./routes/home.route.js";
 import cookieParser from "cookie-parser";
 import http from "http";
 import cors from "cors";
@@ -43,13 +44,7 @@ app.use(cookieParser());
 app.set("socketio", io);
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
-
   onConnection(socket, io);
-
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
-  });
 });
 
 server.listen(3000, () => {
@@ -64,6 +59,7 @@ app.use("/api/friend", friendRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/home", homeRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
