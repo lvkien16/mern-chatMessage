@@ -25,6 +25,10 @@ export default function Home() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const [postsForNewsFeeed, setPostsForNewsFeed] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const refreshPage = () => {
+    setRefresh((prevRefresh) => !prevRefresh);
+  };
 
   const navigate = useNavigate();
 
@@ -124,7 +128,7 @@ export default function Home() {
       }
     };
     fetchPostsForNewsFeed();
-  }, [currentUser.token]);
+  }, [currentUser.token, refresh]);
 
   return (
     <>
@@ -252,7 +256,11 @@ export default function Home() {
           </div>
           <div className="md:border-x-2 md:w-2/3 px-2 pt-5 md:h-screen-60px overflow-y-auto">
             {postsForNewsFeeed.map((post) => (
-              <PostForNewsFeed key={post._id} post={post} />
+              <PostForNewsFeed
+                key={post._id}
+                post={post}
+                refreshPage={refreshPage}
+              />
             ))}
           </div>
         </div>

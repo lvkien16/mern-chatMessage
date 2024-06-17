@@ -24,6 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { IoLocation } from "react-icons/io5";
 import { FaBirthdayCake } from "react-icons/fa";
 import { RiCharacterRecognitionFill } from "react-icons/ri";
+import LikePost from "../components/post/LikePost";
 
 export default function Profile() {
   const location = useLocation();
@@ -119,17 +120,6 @@ export default function Profile() {
       });
       if (res.ok) {
         const data = await res.json();
-        setPosts(
-          posts.map((post) =>
-            post.id === id
-              ? {
-                  ...post,
-                  likes: data.likes,
-                  numberOfLikes: data.numberOfLikes.length,
-                }
-              : post
-          )
-        );
       }
       refreshPage();
     } catch (error) {
@@ -390,19 +380,11 @@ export default function Profile() {
                             ))}
                         </div>
                         <div className="post services flex justify-between mb-1 border-2 border-t-0 rounded">
-                          <div
-                            className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
-                            onClick={() => handleLikePost(post._id)}
-                          >
-                            <FaHeart
-                              className={`${
-                                post.likes.includes(currentUser._id)
-                                  ? "text-red-500"
-                                  : ""
-                              }`}
-                            />
-                            <span>{post.numberOfLikes}</span>
-                          </div>
+                          <LikePost
+                            post={post}
+                            currentUser={currentUser}
+                            refreshPage={refreshPage}
+                          />
                           <div
                             onClick={() => {
                               handleViewPostDetail(post._id);
@@ -677,8 +659,8 @@ export default function Profile() {
           currentImageFocus={currentImageFocus}
           setShowPostImage={setShowPostImage}
           setShowMoreImages={setShowMoreImages}
-          handleLikePost={handleLikePost}
           refreshPage={refreshPage}
+          refresh={refresh}
         />
       )}
     </>

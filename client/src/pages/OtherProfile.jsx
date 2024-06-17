@@ -11,6 +11,7 @@ import { Dropdown, Modal } from "flowbite-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCheckmark, IoLocation } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import LikePost from "./../components/post/LikePost";
 
 export default function OtherProfile({
   currentUser,
@@ -30,8 +31,8 @@ export default function OtherProfile({
   handleShowMoreImages,
   handleViewPostDetail,
   setShowPostImage,
-  handleLikePost,
-  refreshFriendRequests,
+  refreshPage,
+  refresh,
 }) {
   const [friend, setFriend] = useState({});
   const [showRemoveFriend, setShowRemoveFriend] = useState(false);
@@ -48,7 +49,7 @@ export default function OtherProfile({
       }
     };
     fetchGetFriend();
-  }, [otherUser, refreshFriendRequests]);
+  }, [otherUser, refresh]);
 
   const handleAddFriend = async (friendId) => {
     try {
@@ -67,7 +68,7 @@ export default function OtherProfile({
           if (!res.ok) {
             return console.log("error");
           }
-          refreshFriendRequests();
+          refreshPage();
         } catch (error) {
           console.log(error);
         }
@@ -83,7 +84,7 @@ export default function OtherProfile({
         if (!res.ok) {
           return console.log("error");
         }
-        refreshFriendRequests();
+        refreshPage();
       }
     } catch (error) {
       console.log(error);
@@ -103,7 +104,7 @@ export default function OtherProfile({
       if (!res.ok) {
         return console.log("error");
       }
-      refreshFriendRequests();
+      refreshPage();
       setShowRemoveFriend(false);
     } catch (error) {
       console.log(error);
@@ -250,19 +251,7 @@ export default function OtherProfile({
                           ))}
                       </div>
                       <div className="post services flex justify-between mb-3 border-2 border-t-0 rounded">
-                        <div
-                          className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
-                          onClick={() => handleLikePost(post._id)}
-                        >
-                          <FaHeart
-                            className={`${
-                              currentUser._id &&
-                              post.likes.includes(currentUser._id) &&
-                              "!text-red-500"
-                            }`}
-                          />
-                          <span>{post.numberOfLikes}</span>
-                        </div>
+                        <LikePost post={post} refreshPage={refreshPage} />
                         <div
                           onClick={() => handleViewPostDetail(post._id)}
                           className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"

@@ -3,8 +3,9 @@ import { FaCaretRight, FaComment, FaHeart, FaShareAlt } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Dropdown } from "flowbite-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import LikePost from "../post/LikePost";
 
-export default function PostForNewsFeed({ post }) {
+export default function PostForNewsFeed({ post, refreshPage }) {
   const { currentUser } = useSelector((state) => state.user);
   return (
     <div>
@@ -92,17 +93,7 @@ export default function PostForNewsFeed({ post }) {
             ))}
         </div>
         <div className="post services flex justify-between mb-1 border-2 border-t-0 rounded">
-          <div
-            className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
-            // onClick={() => handleLikePost(post._id)}
-          >
-            <FaHeart
-              className={`${
-                post.likes.includes(currentUser._id) ? "text-red-500" : ""
-              }`}
-            />
-            <span>{post.numberOfLikes}</span>
-          </div>
+          <LikePost post={post} refreshPage={refreshPage} />
           <div
             onClick={() => {
               //   handleViewPostDetail(post._id);
