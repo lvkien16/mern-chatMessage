@@ -46,6 +46,7 @@ export const getMessages = async (req, res, next) => {
         { userIdSend: userId1, userIdReceive: userId2 },
         { userIdSend: userId2, userIdReceive: userId1 },
       ],
+      deleted: { $nin: [req.user.id] },
     }).sort({ createdAt: 1 });
     res.json(messages);
   } catch (error) {
@@ -59,6 +60,7 @@ export const getConversations = async (req, res, next) => {
     const userId = req.user.id;
     const messages = await Message.find({
       $or: [{ userIdSend: userId }, { userIdReceive: userId }],
+      deleted: { $nin: [userId] },
     }).sort({ createdAt: -1 });
     const users = messages.reduce((acc, message) => {
       if (message.userIdSend !== userId) {
@@ -80,12 +82,15 @@ export const deleteConversation = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const currentUserId = req.user.id;
-    await Message.deleteMany({
-      $or: [
-        { userIdSend: currentUserId, userIdReceive: userId },
-        { userIdSend: userId, userIdReceive: currentUserId },
-      ],
-    });
+    await Message.updateMany(
+      {
+        $or: [
+          { userIdSend: currentUserId, userIdReceive: userId },
+          { userIdSend: userId, userIdReceive: currentUserId },
+        ],
+      },
+      { $push: { deleted: currentUserId } }
+    );
     res.json({ message: "Conversation deleted" });
   } catch (error) {
     next(error);

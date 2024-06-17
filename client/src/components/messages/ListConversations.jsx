@@ -54,7 +54,7 @@ export default function ListConversations({
   const handleDeleteConversation = async (id) => {
     try {
       const response = await fetch(`/api/message/delete/${id}`, {
-        method: "DELETE",
+        method: "PUT",
       });
       if (!response.ok) {
         return;

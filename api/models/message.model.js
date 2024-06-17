@@ -14,9 +14,14 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    seen: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      enum: ["sent", "received", "read"],
+      default: "sent",
+    },
+    deleted: {
+      type: Array,
+      default: [],
     },
   },
   { timestamps: true }

@@ -5,6 +5,9 @@ import ListConversations from "../components/messages/ListConversations";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:3000");
 
 export default function Messages() {
   const { userId } = useParams();
@@ -31,6 +34,12 @@ export default function Messages() {
     };
     fetchConversations();
   }, [userId, refresh]);
+
+  useEffect(() => {
+    socket.on("chat-message", (data) => {
+      setRefresh((prevRefresh) => !prevRefresh);
+    });
+  }, []);
 
   return (
     <>
