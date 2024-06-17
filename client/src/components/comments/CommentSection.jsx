@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Comment from "./Comment";
 
-export default function CommentSection({ postId }) {
+export default function CommentSection({ postId, refreshPage, refresh }) {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
@@ -27,6 +27,7 @@ export default function CommentSection({ postId }) {
       if (res.ok) {
         setComment("");
         setComments([data, ...comments]);
+        refreshPage();
       }
     } catch (error) {
       console.log(error);
@@ -46,7 +47,7 @@ export default function CommentSection({ postId }) {
       }
     };
     getComments();
-  }, [postId]);
+  }, [postId, refresh]);
   return (
     <>
       <div>
@@ -69,16 +70,6 @@ export default function CommentSection({ postId }) {
             Send
           </button>
         </form>
-      </div>
-      <div className="my-5">
-        {comments.length === 0 && (
-          <p className="text-3xl text-center my-5">No comments yet</p>
-        )}
-        {comments.length > 0 && (
-          <span className="my- border-2 rounded px-3 py-1">
-            {comments.length} {comments.length === 1 ? "comment" : "comments"}
-          </span>
-        )}
       </div>
       <div>
         {comments.map((comment) => (

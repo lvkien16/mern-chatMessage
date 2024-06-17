@@ -43,6 +43,7 @@ export default function ListConversations({
         if (response.ok && data.length > 0) {
           setLastMessage(data[data.length - 1].content);
           setUserLastSend(data[data.length - 1].userIdSend);
+          setTimeOfLastMessage(data[data.length - 1].createdAt);
         }
       } catch (error) {
         console.log(error);
@@ -53,7 +54,7 @@ export default function ListConversations({
 
   const handleDeleteConversation = async (id) => {
     try {
-      const response = await fetch(`/api/message/delete/${id}`, {
+      const response = await fetch(`/api/message/delete-conversation/${id}`, {
         method: "PUT",
       });
       if (!response.ok) {

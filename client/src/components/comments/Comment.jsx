@@ -5,7 +5,6 @@ import { AiFillLike } from "react-icons/ai";
 
 export default function Comment({ comment }) {
   const [user, setUser] = useState({});
-  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const getUser = async () => {
@@ -21,6 +20,7 @@ export default function Comment({ comment }) {
     };
     getUser();
   }, [comment]);
+
   return (
     <>
       <div className="my-5">

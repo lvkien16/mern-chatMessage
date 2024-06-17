@@ -3,7 +3,6 @@ import { FaRegUser } from "react-icons/fa6";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { TbLock } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
 import { Alert, Spinner } from "flowbite-react";
 import OAuth from "../components/OAuth";
 

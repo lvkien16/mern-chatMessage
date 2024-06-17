@@ -16,15 +16,15 @@ import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function ShowAvatar({ avatar, showAvatar, setShowAvatar }) {
+export default function ShowAvatar({
+  avatar,
+  showAvatar,
+  setShowAvatar,
+  refreshPage,
+}) {
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
-  const [refresh, setRefresh] = useState(false);
   const dishpatch = useDispatch();
-
-  const refreshFriendRequests = () => {
-    setRefresh((prevRefresh) => !prevRefresh);
-  };
 
   const handleChangeAvatar = async (file) => {
     if (!file) {
@@ -76,9 +76,8 @@ export default function ShowAvatar({ avatar, showAvatar, setShowAvatar }) {
       }
       setShowAvatar(false);
       setFormData({});
-      refreshFriendRequests();
+      refreshPage();
       dishpatch(updateSuccess(data));
-      refreshFriendRequests();
       toast.success("Avatar updated successfully");
     } catch (error) {
       console.error("Error saving avatar:", error);

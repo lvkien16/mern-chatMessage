@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import FriendRequests from "../components/friends/FriendRequests";
 import ListFriends from "../components/friends/ListFriends";
+import UseRefreshPage from "../components/UseRefreshPage";
 
 export default function Friends() {
   const [friendButton, setFriendButton] = useState(true);
@@ -9,7 +10,8 @@ export default function Friends() {
   const { currentUser } = useSelector((state) => state.user);
   const [friendRequests, setFriendRequests] = useState([]);
   const [listFriends, setListFriends] = useState([]);
-  const [refresh, setRefresh] = useState(false);
+
+  const { refresh, refreshPage } = UseRefreshPage();
 
   useEffect(() => {
     const fetchGetFriend = async () => {
@@ -35,10 +37,6 @@ export default function Friends() {
   const handleRequestButton = () => {
     setRequestButton(true);
     setFriendButton(false);
-  };
-
-  const refreshFriendRequests = () => {
-    setRefresh((prevRefresh) => !prevRefresh);
   };
 
   return (
@@ -108,7 +106,7 @@ export default function Friends() {
                   <FriendRequests
                     key={index}
                     friend={friend}
-                    refreshFriendRequests={refreshFriendRequests}
+                    refreshPage={refreshPage}
                   />
                 ))
               )}

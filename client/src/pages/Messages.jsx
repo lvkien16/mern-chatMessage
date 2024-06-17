@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import io from "socket.io-client";
+import UseRefreshPage from "../components/UseRefreshPage";
 
 const socket = io("http://localhost:3000");
 
@@ -13,11 +14,7 @@ export default function Messages() {
   const { userId } = useParams();
   const { currentUser } = useSelector((state) => state.user);
   const [conversations, setConversations] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-
-  const refeshPage = () => {
-    setRefresh((prevRefresh) => !prevRefresh);
-  };
+  const { refresh, refeshPage } = UseRefreshPage();
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -37,7 +34,7 @@ export default function Messages() {
 
   useEffect(() => {
     socket.on("chat-message", (data) => {
-      setRefresh((prevRefresh) => !prevRefresh);
+      refresh();
     });
   }, []);
 

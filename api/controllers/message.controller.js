@@ -96,3 +96,15 @@ export const deleteConversation = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteMessage = async (req, res, next) => {
+  try {
+    const { messageId } = req.params;
+    await Message.findByIdAndUpdate(messageId, {
+      $push: { deleted: req.user.id },
+    });
+    res.json({ message: "Message deleted" });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { IoCheckmark } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
+import UseRefreshPage from "../UseRefreshPage";
 
-export default function FriendRequests({ friend, refreshFriendRequests }) {
+export default function FriendRequests({ friend, refreshPage }) {
   const [user, setUser] = useState({});
   useEffect(() => {
     const fetchGetUser = async () => {
@@ -33,7 +34,7 @@ export default function FriendRequests({ friend, refreshFriendRequests }) {
       if (!res.ok) {
         return console.log("error");
       }
-      refreshFriendRequests();
+      refreshPage();
     } catch (error) {
       console.log(error);
     }
@@ -52,7 +53,7 @@ export default function FriendRequests({ friend, refreshFriendRequests }) {
       if (!res.ok) {
         return console.log("error");
       }
-      refreshFriendRequests();
+      refreshPage();
     } catch (error) {
       console.log(error);
     }

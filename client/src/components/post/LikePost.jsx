@@ -25,7 +25,10 @@ export default function LikePost({ post, refreshPage }) {
     >
       <FaHeart
         className={`${
-          post.likes.includes(currentUser._id) ? "text-red-500" : ""
+          currentUser._id &&
+          post.likes &&
+          post.likes.includes(currentUser._id) &&
+          "text-red-500"
         }`}
       />
       <span>{post.numberOfLikes}</span>

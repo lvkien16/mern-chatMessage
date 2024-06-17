@@ -5,16 +5,13 @@ import AllNotifications from "./../components/notifications/AllNotifications";
 import NotificationsUnread from "../components/notifications/NotificationsUnread";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UseRefreshPage from "../components/UseRefreshPage";
 
 export default function Notifications() {
   const { currentUser } = useSelector((state) => state.user);
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-
-  const refreshPage = () => {
-    setRefresh((prevRefresh) => !prevRefresh);
-  };
+  const { refresh, refreshPage } = UseRefreshPage();
 
   useEffect(() => {
     const fetchNotifications = async () => {

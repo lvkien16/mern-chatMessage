@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  FaCaretRight,
-  FaComment,
-  FaHeart,
-  FaPlus,
-  FaShareAlt,
-} from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { FaCaretRight, FaComment, FaPlus, FaShareAlt } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import CommentSection from "../components/CommentSection";
+import CommentSection from "../components/comments/CommentSection";
+import LikePost from "../components/post/LikePost";
+import NumberOfComment from "../components/comments/NumberOfComment";
+import UseRefreshPage from "../components/UseRefreshPage";
 
 export default function Post() {
   const { postId } = useParams();
   const [post, setPost] = useState({});
   const [postUser, setPostUser] = useState({});
-  const { currentUser } = useSelector((state) => state.user);
+  const { refresh, refreshPage } = UseRefreshPage();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -26,7 +22,7 @@ export default function Post() {
       setPost(data);
     };
     fetchPost();
-  }, [postId]);
+  }, [postId, refresh]);
 
   useEffect(() => {
     if (post.userId) {
@@ -45,24 +41,6 @@ export default function Post() {
       fetchPostUser();
     }
   }, [post.userId]);
-
-  const handleLikePost = async (id) => {
-    try {
-      const res = await fetch(`/api/post/like/${id}/${currentUser._id}`, {
-        method: "PUT",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setPost((prevPost) => ({
-          ...prevPost,
-          likes: data.likes,
-          numberOfLikes: data.likes.length,
-        }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <>
@@ -122,32 +100,21 @@ export default function Post() {
                 ))}
             </div>
             <div className="post services flex justify-between mb-3 border-2 rounded">
-              <div
-                className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
-                onClick={() => {
-                  handleLikePost(post._id);
-                }}
-              >
-                <FaHeart
-                  className={`${
-                    currentUser._id &&
-                    post.likes &&
-                    post.likes.includes(currentUser._id) &&
-                    "text-red-500"
-                  }`}
-                />
-
-                <span>{post.numberOfLikes}</span>
-              </div>
+              <LikePost post={post} refreshPage={refreshPage} />
               <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                 <FaComment />
+                <NumberOfComment postId={postId} refresh={refresh} />
               </div>
               <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                 <FaShareAlt />
               </div>
             </div>
             <div className="write comment">
-              <CommentSection postId={postId} />
+              <CommentSection
+                postId={postId}
+                refreshPage={refreshPage}
+                refresh={refresh}
+              />
             </div>
           </div>
         </div>

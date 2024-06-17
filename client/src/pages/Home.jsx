@@ -14,6 +14,7 @@ import { app } from "../firebase";
 import { FaFileUpload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import PostForNewsFeed from "../components/home/PostForNewsFeed";
+import UseRefreshPage from "../components/UseRefreshPage";
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
@@ -25,10 +26,7 @@ export default function Home() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const [postsForNewsFeeed, setPostsForNewsFeed] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-  const refreshPage = () => {
-    setRefresh((prevRefresh) => !prevRefresh);
-  };
+  const { refresh, refreshPage } = UseRefreshPage();
 
   const navigate = useNavigate();
 

@@ -1,15 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Dropdown } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import OtherProfile from "./OtherProfile";
-import {
-  FaCaretRight,
-  FaHeart,
-  FaComment,
-  FaShareAlt,
-  FaPlus,
-} from "react-icons/fa";
+import { FaCaretRight, FaShareAlt, FaPlus } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
 import ShowAvatar from "../components/profile/ShowAvatar";
@@ -25,11 +19,12 @@ import { IoLocation } from "react-icons/io5";
 import { FaBirthdayCake } from "react-icons/fa";
 import { RiCharacterRecognitionFill } from "react-icons/ri";
 import LikePost from "../components/post/LikePost";
+import CommentPost from "../components/post/CommentPost";
+import UseRefreshPage from "../components/UseRefreshPage";
 
 export default function Profile() {
-  const location = useLocation();
   const { userId } = useParams();
-  const [postId, setPostId] = useState("");
+  const { postId } = useState("");
   const [showAvatar, setShowAvatar] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -45,7 +40,6 @@ export default function Profile() {
   const [showDeletePost, setShowDeletePost] = useState(false);
   const [dataToEdit, setDataToEdit] = useState({});
   const [postIdToDelete, setPostIdToDelete] = useState("");
-  const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentDate = new Date().toISOString().split("T")[0];
@@ -53,9 +47,7 @@ export default function Profile() {
   const [birthday, setBirthday] = useState(currentUser.birthday || "");
   const [bio, setBio] = useState(currentUser.bio || "");
 
-  const refreshPage = () => {
-    setRefresh((prevRefresh) => !prevRefresh);
-  };
+  const { refreshPage, refresh } = UseRefreshPage();
 
   useEffect(() => {
     if (userId && currentUser._id) {
@@ -111,20 +103,6 @@ export default function Profile() {
 
   const handleShowDeletePost = () => {
     setShowDeletePost(true);
-  };
-
-  const handleLikePost = async (id) => {
-    try {
-      const res = await fetch(`/api/post/like/${id}/${currentUser._id}`, {
-        method: "PUT",
-      });
-      if (res.ok) {
-        const data = await res.json();
-      }
-      refreshPage();
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const handleSubmitDeletePost = async (id) => {
@@ -380,19 +358,8 @@ export default function Profile() {
                             ))}
                         </div>
                         <div className="post services flex justify-between mb-1 border-2 border-t-0 rounded">
-                          <LikePost
-                            post={post}
-                            currentUser={currentUser}
-                            refreshPage={refreshPage}
-                          />
-                          <div
-                            onClick={() => {
-                              handleViewPostDetail(post._id);
-                            }}
-                            className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3"
-                          >
-                            <FaComment />
-                          </div>
+                          <LikePost post={post} refreshPage={refreshPage} />
+                          <CommentPost post={post} />
                           <div className="w-full py-3 hover:bg-gray-300 hover:cursor-pointer rounded flex gap-2 items-center px-3">
                             <FaShareAlt />
                           </div>

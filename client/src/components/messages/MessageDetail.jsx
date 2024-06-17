@@ -6,14 +6,13 @@ import io from "socket.io-client";
 
 const socket = io("http://localhost:3000");
 
-export default function MessageDetail({ userId, refeshPage, refresh }) {
+export default function MessageDetail({ userId, refresh, refreshPage }) {
   const { currentUser } = useSelector((state) => state.user);
   const elementRef = useRef(null);
   const [elementWidth, setElementWidth] = useState(0);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState({});
-  const userId1 = currentUser._id;
 
   const bottomRef = useRef(null);
 
@@ -57,6 +56,7 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
     setMessages([...messages, data]);
 
     setMessage("");
+    refreshPage();
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -130,16 +130,16 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
                 key={message._id}
                 className={`${
                   message.userIdSend === currentUser._id
-                    ? "right-message-content"
-                    : "left-message-content"
-                } px-2`}
+                    ? "right-message-content justify-end"
+                    : "left-message-content justify-start"
+                } px-2 flex`}
                 ref={bottomRef}
               >
                 <div
                   className={`${
                     message.userIdSend === currentUser._id
-                      ? "message-box ms-auto bg-emerald-700 p-3 rounded-lg w-2/3 my-3"
-                      : "message-box bg-gray-300 p-3 rounded-lg w-2/3 my-3"
+                      ? "message-box ms-auto bg-emerald-700 p-3 rounded-lg max-w-2/3 my-3 px-3"
+                      : "message-box bg-gray-300 p-3 rounded-lg max-w-2/3 my-3 px-3"
                   }`}
                 >
                   <p
@@ -152,10 +152,10 @@ export default function MessageDetail({ userId, refeshPage, refresh }) {
                     {message.content}
                   </p>
                   <p
-                    className={`text-sm text-end ${
+                    className={`text- text-end ${
                       message.userIdSend === currentUser._id
-                        ? " text-white"
-                        : "text-gray-800"
+                        ? " text-gray-200"
+                        : "text-gray-600"
                     }`}
                   >
                     {moment(message.createdAt).fromNow()}
